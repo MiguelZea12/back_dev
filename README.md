@@ -47,6 +47,26 @@ $ docker-compose up
 $ docker-compose down
 ```
 
+## Generate Migration
+
+To generate migrations make this
+
+```bash
+# Generate the migration in LINUX (inside of "", put the name of the migration)
+$ npm run migration:generate --name="name_of_migration"
+
+#Or
+
+# Generate the migration in WINDOWS (inside of "", put the name of the migration)
+npm run migration:generate:win --name=RelationsTemplate
+
+# Run the migration
+$ npm run migration:run
+```
+
+When you make a "migrate:generate", automatically put the file inside of Migration directory
+So not put the directory to generate the migration
+
 ## Test
 
 ```bash
