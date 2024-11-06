@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from '@/user/user.module';
 import { AuthModule } from '@/auth/auth.module';
 import { AuthMiddleware } from '@/middlewares/auth.middleware';
+import { PatientsModule } from './patients/patients.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuthMiddleware } from '@/middlewares/auth.middleware';
     }),
     UserModule,
     AuthModule,
+    PatientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
