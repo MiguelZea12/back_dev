@@ -23,7 +23,10 @@ export class PatientsController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() updatePatientDto: UpdatePatientDto) {
+  async update(
+    @Param('id') id: number,
+    @Body() updatePatientDto: UpdatePatientDto,
+  ) {
     return this.patientsService.update(id, updatePatientDto);
   }
 
