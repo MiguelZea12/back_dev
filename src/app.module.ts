@@ -13,7 +13,11 @@ import { UserModule } from '@/user/user.module';
 import { AuthModule } from '@/auth/auth.module';
 import { AuthMiddleware } from '@/middlewares/auth.middleware';
 import { PatientsModule } from './patients/patients.module';
+import { CaregiversModule } from './Caregiver/caregivers.module';
 import { RoleModule } from './role/role.module';
+import { TeamsModule } from './team/teams.module';
+import { AssignmentsModule } from './assignment/assignments.module';
+import { WorkGroupsModule } from './workgroup/workgroups.module';
 
 @Module({
   imports: [
@@ -31,6 +35,10 @@ import { RoleModule } from './role/role.module';
     UserModule,
     AuthModule,
     PatientsModule,
+    CaregiversModule,
+    TeamsModule,
+    AssignmentsModule,
+    WorkGroupsModule,
     RoleModule,
   ],
   controllers: [AppController],
