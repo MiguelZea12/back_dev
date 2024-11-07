@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CaregiversService } from './caregivers.service';
 import { CaregiversController } from './caregivers.controller';
-import { Caregiver } from './entitlies/caregiver.entity';
+import { Caregiver } from './entities/caregiver.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Caregiver])],

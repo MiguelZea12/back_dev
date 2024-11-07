@@ -15,6 +15,8 @@ import { AuthMiddleware } from '@/middlewares/auth.middleware';
 import { PatientsModule } from './patients/patients.module';
 import { CaregiversModule } from './Caregiver/caregivers.module';
 import { RoleModule } from './role/role.module';
+import { TeamsModule } from './team/teams.module';
+import { WorkGroupsModule } from './workgroup/workgroups.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { RoleModule } from './role/role.module';
     AuthModule,
     PatientsModule,
     CaregiversModule,
+    TeamsModule,
+    WorkGroupsModule,
     RoleModule,
   ],
   controllers: [AppController],
