@@ -1,4 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateWorkGroupDto } from './create-workgroup.dto';
+import { CreateWorkGroupDto } from './createWorkgroup.dto';
 
 export class UpdateWorkGroupDto extends PartialType(CreateWorkGroupDto) {}
