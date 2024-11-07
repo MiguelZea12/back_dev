@@ -13,6 +13,7 @@ import { UserModule } from '@/user/user.module';
 import { AuthModule } from '@/auth/auth.module';
 import { AuthMiddleware } from '@/middlewares/auth.middleware';
 import { PatientsModule } from './patients/patients.module';
+import { CaregiversModule } from './Caregiver/caregivers.module';
 import { RoleModule } from './role/role.module';
 
 @Module({
@@ -31,6 +32,7 @@ import { RoleModule } from './role/role.module';
     UserModule,
     AuthModule,
     PatientsModule,
+    CaregiversModule,
     RoleModule,
   ],
   controllers: [AppController],
