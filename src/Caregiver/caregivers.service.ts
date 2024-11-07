@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Caregiver } from './entitlies/caregiver.entity';
+import { Caregiver } from './entities/caregiver.entity';
 import { CreateCaregiverDto } from './dto/createCaregiver.dto';
 import { UpdateCaregiverDto } from './dto/updateCaregiver.dto';
 

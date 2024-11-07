@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Param, Body, Delete } from '@nestjs/common'
 import { CaregiversService } from './caregivers.service';
 import { CreateCaregiverDto } from './dto/createCaregiver.dto';
 import { UpdateCaregiverDto } from './dto/updateCaregiver.dto';
-import { Caregiver } from './entitlies/caregiver.entity';
+import { Caregiver } from './entities/caregiver.entity';
 
 @Controller('caregivers')
 export class CaregiversController {
