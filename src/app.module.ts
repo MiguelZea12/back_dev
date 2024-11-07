@@ -13,6 +13,7 @@ import { UserModule } from '@/user/user.module';
 import { AuthModule } from '@/auth/auth.module';
 import { AuthMiddleware } from '@/middlewares/auth.middleware';
 import { PatientsModule } from './patients/patients.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { PatientsModule } from './patients/patients.module';
     UserModule,
     AuthModule,
     PatientsModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

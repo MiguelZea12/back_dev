@@ -24,10 +24,11 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(':id')
-  async getUser(@Param('id') id: string): Promise<GetUserDto> {
+  async findRoleById(@Param('id') id: number): Promise<GetUserDto> {
     this.logger.log(`Buscando usuario con ID: ${id}`);
+
     try {
-      return this.userService.findByOneById(+id);
+      return this.userService.findByOneById(id);
     } catch (error) {
       this.logger.error(`Usuario no econtrado con ID: ${id}`, error.stack);
 
@@ -64,12 +65,12 @@ export class UserController {
   @Patch(':id')
   async updateUser(
     @Body() updateUserDto: UpdateUserDto,
-    @Param('id') id: string,
+    @Param('id') id: number,
   ): Promise<GetUserDto> {
     this.logger.log(`Actualizando usuario con ID: ${id}`);
 
     try {
-      const updatedUser = await this.userService.updateUser(+id, updateUserDto);
+      const updatedUser = await this.userService.updateUser(id, updateUserDto);
 
       this.logger.log(`Usuarion con ID: ${id}, actualizado existosamente`);
 
