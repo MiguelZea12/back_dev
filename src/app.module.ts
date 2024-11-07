@@ -16,6 +16,7 @@ import { PatientsModule } from './patients/patients.module';
 import { CaregiversModule } from './Caregiver/caregivers.module';
 import { RoleModule } from './role/role.module';
 import { TeamsModule } from './team/teams.module';
+import { AssignmentsModule } from './assignment/assignments.module';
 import { WorkGroupsModule } from './workgroup/workgroups.module';
 
 @Module({
@@ -36,6 +37,7 @@ import { WorkGroupsModule } from './workgroup/workgroups.module';
     PatientsModule,
     CaregiversModule,
     TeamsModule,
+    AssignmentsModule,
     WorkGroupsModule,
     RoleModule,
   ],
