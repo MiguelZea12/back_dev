@@ -11,6 +11,9 @@ export class Person {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  document: string;
+
   @Column({
     nullable: true,
     length: 100,
@@ -28,9 +31,6 @@ export class Person {
     length: 100,
   })
   email: string;
-
-  @Column({ nullable: true })
-  document: string;
 
   @Column({ nullable: true })
   direction: string;
