@@ -68,7 +68,8 @@ export class EmailService {
     );
 
     // Obtain the email for sender
-    const senderEmail = this.configService.get<string>('EMAIL_SOFTWARE');
+    const senderEmail: string =
+      this.configService.get<string>('EMAIL_SOFTWARE');
 
     // Send the email with the generated content
     await this.sendEmail(
