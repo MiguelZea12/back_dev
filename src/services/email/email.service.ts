@@ -67,10 +67,13 @@ export class EmailService {
       context,
     );
 
+    // Obtain the email for sender
+    const senderEmail = this.configService.get<string>('EMAIL_SOFTWARE');
+
     // Send the email with the generated content
     await this.sendEmail(
       'Software Vinculación',
-      'bsantyserrano@gmail.com',
+      senderEmail,
       name,
       email,
       'Solicitud para Restablecer Contraseña',
