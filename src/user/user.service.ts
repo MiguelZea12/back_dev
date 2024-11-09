@@ -14,6 +14,8 @@ import { AuthUserDto } from '@/user/dto/authUser.dto';
 import { GetUserDto } from '@/user/dto/getUser.dto';
 import { CreateUserDto } from '@/user/dto/createUser.dto';
 import { UpdateUserDto } from '@/user/dto/updateUser.dto';
+import { FiltersUserDto } from './dto/filtersUser.dto';
+import { RoleService } from '@/role/role.service';
 
 @Injectable()
 export class UserService {
@@ -22,6 +24,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly roleService: RoleService,
   ) {}
 
   // Const Message for Not Found
@@ -39,13 +42,14 @@ export class UserService {
     return new HttpException(errorMsg, status);
   }
 
-  async findOneByUsername(username: string): Promise<AuthUserDto> {
+  async findOneByDocument(document: string): Promise<AuthUserDto> {
     const user = await this.userRepository.findOne({
-      where: { username },
+      where: { document },
+      relations: ['role'],
     });
 
     if (!user) {
-      const errorMsg = this.MessageNotFounded('username', username);
+      const errorMsg = this.MessageNotFounded('numero de cédula', document);
       this.logger.error(errorMsg);
       throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
     }
@@ -56,6 +60,7 @@ export class UserService {
   async findByOneById(id: number): Promise<GetUserDto> {
     const user = await this.userRepository.findOne({
       where: { id },
+      relations: ['role'],
     });
 
     if (!user) {
@@ -86,15 +91,83 @@ export class UserService {
     return user;
   }
 
+  async findAllFilter(filtersUserDto: FiltersUserDto): Promise<any> {
+    const { username, name_role, page = 1, limit = 10 } = filtersUserDto;
+
+    const query = this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.role', 'role');
+
+    if (username) {
+      query.andWhere('user.username ILIKE :username', {
+        username: `%${username}%`,
+      });
+    }
+
+    if (name_role) {
+      query.andWhere('role.name_role ILIKE :name_role', {
+        name_role: `%${name_role}%`,
+      });
+    }
+
+    // Order by createdAt in descending order
+    query.orderBy('user.createdAt', 'DESC');
+
+    query.skip((page - 1) * limit).take(limit);
+
+    try {
+      const [users, totalCount] = await query.getManyAndCount();
+
+      this.logger.log('Buscando usuarios..');
+
+      const totalPages = Math.ceil(totalCount / limit);
+
+      const userDtos = users.map((user) =>
+        plainToInstance(GetUserDto, user, {
+          excludeExtraneousValues: true,
+        }),
+      );
+
+      const userPaginated: any = {
+        data: userDtos,
+        totalCount,
+        userPerPage: userDtos.length,
+        totalPages,
+      };
+
+      return {
+        UserPaginated: userPaginated,
+        totalCount,
+      };
+    } catch (error) {
+      const errorMessage = 'Error buscando los usuarios';
+
+      this.logger.error(errorMessage, error.stack);
+
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async createUser(userDto: CreateUserDto): Promise<GetUserDto> {
-    const { username, role, password, email, document, direction, status } =
-      userDto;
+    const {
+      name,
+      lastName,
+      role,
+      password,
+      email,
+      document,
+      direction,
+      status,
+    } = userDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const roleDb = await this.roleService.findByName(role.name_role);
+
     const newUser = this.userRepository.create({
-      username,
-      role,
+      name,
+      lastName,
+      role: roleDb,
       password: hashedPassword,
       email,
       document,
