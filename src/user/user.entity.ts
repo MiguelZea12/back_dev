@@ -1,26 +1,16 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, ManyToOne } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { UserRole } from '@/user/interface/userRole';
 import { Person } from '@/person/person.entity';
+import { Role } from '@/role/role.entity';
 
 @Entity()
 export class User extends Person {
-  @Column({
-    nullable: true,
-    unique: true,
-  })
-  username: string;
-
   @Column()
   @Exclude()
   password: string;
 
-  @Column({
-    nullable: false,
-    type: 'enum',
-    enum: UserRole,
-  })
-  role: UserRole;
+  @ManyToOne(() => Role, (role) => role.users)
+  role: Role;
 
   @Column({
     nullable: false,
