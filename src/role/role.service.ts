@@ -40,14 +40,32 @@ export class RoleService {
     return getRoleDto;
   }
 
+  async findByName(name_role: string): Promise<GetRoleDto> {
+    const role = await this.roleRepository.findOne({
+      where: { name_role },
+    });
+
+    if (!role) {
+      const errorMsg = this.MessageNotFounded('nombre', name_role);
+
+      this.logger.error(errorMsg);
+
+      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+    }
+
+    const getRoleDto = plainToInstance(GetRoleDto, role);
+
+    return getRoleDto;
+  }
+
   async findAllFilter(filtersRoleDto: FiltersRoleDto): Promise<any> {
-    const { role_name, page = 1, limit = 10 } = filtersRoleDto;
+    const { name_role, page = 1, limit = 10 } = filtersRoleDto;
 
     const query = this.roleRepository.createQueryBuilder('role');
 
-    if (role_name) {
-      query.andWhere('role.role_name ILIKE :role_name', {
-        role_name: `%${role_name}%`,
+    if (name_role) {
+      query.andWhere('role.name_role ILIKE :name_role', {
+        name_role: `%${name_role}%`,
       });
     }
 
