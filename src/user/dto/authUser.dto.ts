@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsEmail } from 'class-validator';
+import { IsString, IsNumber, IsEmail, IsUUID } from 'class-validator';
 
 export class AuthUserDto {
   @IsNumber()
@@ -8,7 +8,16 @@ export class AuthUserDto {
   document: string;
 
   @IsString()
+  name: string;
+
+  @IsString()
+  lastName: string;
+
+  @IsString()
   password: string;
+
+  @IsUUID('4')
+  resetPasswordToken: string;
 
   @IsEmail()
   email: string;

@@ -2,6 +2,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+import * as path from 'path';
 
 dotenv.config();
 
@@ -21,10 +22,16 @@ export const dataBaseConfig: DataSourceOptions = {
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   synchronize: true,
   ssl: {
-    ca: fs
-      .readFileSync(__dirname + '/../../ssl/DigiCertGlobalRootG2.crt.pem')
-      .toString(),
     rejectUnauthorized: true,
+    ca: fs
+      .readFileSync(
+        path.join(
+          __dirname,
+          '../../',
+          configService.get<string>('DATABASE_SSL_FILE'),
+        ),
+      )
+      .toString(),
   },
 };
 

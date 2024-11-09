@@ -91,6 +91,23 @@ export class UserService {
     return user;
   }
 
+  async findOneByResetPasswordToken(
+    resetPasswordToken: string,
+  ): Promise<AuthUserDto> {
+    const user = await this.userRepository.findOne({
+      where: { resetPasswordToken },
+      relations: ['role'],
+    });
+
+    if (!user) {
+      const errorMsg = 'Usuario no encontrado';
+      this.logger.error(errorMsg);
+      throw new NotFoundException(errorMsg);
+    }
+
+    return user;
+  }
+
   async findAllFilter(filtersUserDto: FiltersUserDto): Promise<any> {
     const { username, name_role, page = 1, limit = 10 } = filtersUserDto;
 

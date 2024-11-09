@@ -9,10 +9,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '@/user/user.entity';
 import { AuthController } from './auth.controller';
+import { EmailModule } from '@/services/email/email.module';
+import { EmailTemplateModule } from '@/email-template/email-template.module';
 
 @Module({
   imports: [
     UserModule,
+    EmailModule,
+    EmailTemplateModule,
     PassportModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync({

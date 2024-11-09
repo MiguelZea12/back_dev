@@ -9,6 +9,14 @@ export class User extends Person {
   @Exclude()
   password: string;
 
+  @Column({
+    nullable: true,
+    type: 'uuid',
+    unique: true,
+    name: 'reset_password_token',
+  })
+  resetPasswordToken: string;
+
   @ManyToOne(() => Role, (role) => role.users)
   role: Role;
 
