@@ -1,7 +1,12 @@
 import { IsString, IsOptional, IsInt, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-export class FiltersRoleDto {
+export class FiltersUserDto {
+  @IsOptional()
+  @IsString()
+  @Transform(({ value }) => value || undefined)
+  username?: string;
+
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value || undefined)

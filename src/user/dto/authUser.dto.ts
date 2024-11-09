@@ -5,7 +5,7 @@ export class AuthUserDto {
   id: number;
 
   @IsString()
-  username: string;
+  document: string;
 
   @IsString()
   password: string;

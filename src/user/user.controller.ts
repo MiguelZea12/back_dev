@@ -10,11 +10,13 @@ import {
   HttpStatus,
   Logger,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { UserService } from '@/user/user.service';
 import { GetUserDto } from '@/user/dto/getUser.dto';
 import { CreateUserDto } from '@/user/dto/createUser.dto';
 import { UpdateUserDto } from '@/user/dto/updateUser.dto';
+import { FiltersUserDto } from './dto/filtersUser.dto';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -36,6 +38,27 @@ export class UserController {
         `Usuario no econtrado con ID: ${id}`,
         HttpStatus.NOT_FOUND,
       );
+    }
+  }
+
+  @Get()
+  async findAllFiltered(
+    @Query() filtersUserDto: FiltersUserDto,
+  ): Promise<GetUserDto[]> {
+    this.logger.log('Obteniendo todos los Usuarios de la base de datos.');
+
+    try {
+      return await this.userService.findAllFilter(filtersUserDto);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      const errMessage = 'Error al obtener los usuarios';
+
+      this.logger.error(errMessage, error.stack);
+
+      throw new HttpException(errMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
