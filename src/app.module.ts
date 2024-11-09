@@ -12,12 +12,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from '@/user/user.module';
 import { AuthModule } from '@/auth/auth.module';
 import { AuthMiddleware } from '@/middlewares/auth.middleware';
-import { PatientsModule } from './patients/patients.module';
-import { CaregiversModule } from './Caregiver/caregivers.module';
-import { RoleModule } from './role/role.module';
-import { TeamsModule } from './team/teams.module';
-import { AssignmentsModule } from './assignment/assignments.module';
-import { WorkGroupsModule } from './workgroup/workgroups.module';
+import { PatientsModule } from '@/patients/patients.module';
+import { CaregiversModule } from '@/Caregiver/caregivers.module';
+import { RoleModule } from '@/role/role.module';
+import { TeamsModule } from '@/team/teams.module';
+import { AssignmentsModule } from '@/assignment/assignments.module';
+import { WorkGroupsModule } from '@/workgroup/workgroups.module';
+import { EmailModule } from '@/services/email/email.module';
+import { EmailTemplateModule } from './email-template/email-template.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { WorkGroupsModule } from './workgroup/workgroups.module';
     AssignmentsModule,
     WorkGroupsModule,
     RoleModule,
+    EmailModule,
+    EmailTemplateModule,
   ],
   controllers: [AppController],
   providers: [AppService],
