@@ -19,11 +19,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.userService.findOneByUsername(username);
+  async validateUser(document: string, password: string): Promise<any> {
+    const user = await this.userService.findOneByDocument(document);
 
     if (!user) {
-      const errorMessage = 'User not founded';
+      const errorMessage = 'Usuario no econtrado';
       this.logger.error(errorMessage);
       throw new HttpException(errorMessage, HttpStatus.NOT_FOUND);
     }
@@ -31,7 +31,7 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      const errorMessage = 'Invalid credentials';
+      const errorMessage = 'Credeciales invalidas';
 
       this.logger.error(errorMessage);
 
@@ -43,17 +43,18 @@ export class AuthService {
 
   async login(user: any) {
     try {
-      const userData = await this.validateUser(user.username, user.password);
+      const userData = await this.validateUser(user.document, user.password);
 
       const payload = {
         sub: userData.id,
-        username: userData.username,
+        document: userData.document,
       };
 
       return {
         user: {
           id: userData.id,
-          username: userData.username,
+          document: userData.document,
+          name: userData.name,
           role: userData.role,
         },
         access_token: this.jwtService.sign(payload),
@@ -67,7 +68,7 @@ export class AuthService {
         throw new HttpException(error.message, error.status);
       } else {
         throw new HttpException(
-          'Login error',
+          'Error en el inicio de sesión',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
