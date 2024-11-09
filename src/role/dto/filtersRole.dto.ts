@@ -5,7 +5,7 @@ export class FiltersRoleDto {
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value || undefined)
-  role_name?: string;
+  name_role?: string;
 
   @IsOptional()
   @IsInt()

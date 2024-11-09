@@ -8,7 +8,7 @@ export class GetRoleDto {
 
   @Expose()
   @IsString()
-  role_name: string;
+  name_rol: string;
 
   @Expose()
   @IsDate()
