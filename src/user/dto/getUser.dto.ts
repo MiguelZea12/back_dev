@@ -1,13 +1,12 @@
 import {
   IsString,
   IsNumber,
-  IsEnum,
   IsOptional,
   IsEmail,
   IsBoolean,
 } from 'class-validator';
-import { Expose } from 'class-transformer';
-import { UserRole } from '../interface/userRole';
+import { Expose, Type } from 'class-transformer';
+import { GetRoleDto } from '@/role/dto/getRole.dto';
 
 export class GetUserDto {
   @Expose()
@@ -23,8 +22,8 @@ export class GetUserDto {
   email: string;
 
   @Expose()
-  @IsEnum(UserRole)
-  role: UserRole;
+  @Type(() => GetRoleDto)
+  role: GetRoleDto;
 
   @Expose()
   @IsBoolean()

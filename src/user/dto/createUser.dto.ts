@@ -1,21 +1,12 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsEnum,
-  Length,
-  IsBoolean,
-} from 'class-validator';
-import { Person } from '@/person/person.entity';
-import { UserRole } from '@/user/interface/userRole';
+import { IsString, IsNotEmpty, Length, IsBoolean } from 'class-validator';
+import { CreatePersonDto } from '@/person/dto/createPerson.dto';
+import { Type } from 'class-transformer';
+import { Role } from '@/role/role.entity';
 
-export class CreateUserDto extends Person {
-  @IsString()
+export class CreateUserDto extends CreatePersonDto {
   @IsNotEmpty()
-  username: string;
-
-  @IsEnum(UserRole)
-  @IsNotEmpty()
-  role: UserRole;
+  @Type(() => Role)
+  role: Role;
 
   @IsString()
   @IsNotEmpty()
