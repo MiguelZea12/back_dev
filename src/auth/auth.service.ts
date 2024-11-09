@@ -116,7 +116,8 @@ export class AuthService {
       this.logger.log('Email para restablecer la contraseña enviado!!');
 
       return {
-        message: 'Correo electrónico para restablecer la contraseña enviado',
+        message:
+          'Se ha enviado un correo electrónico para reestablecer tu contraseña',
       };
     } catch (error) {
       // See if the user was not found
@@ -144,10 +145,10 @@ export class AuthService {
 
       this.userRepository.save(user);
 
-      this.logger.log('Contraseña restablecida exitosamente!!!');
+      this.logger.log('Contraseña restablecida exitosamente');
 
       return {
-        message: 'Contraseña restablecida exitosamente!!!',
+        message: 'Contraseña restablecida exitosamente',
       };
     } catch (error) {
       // See if the user was not found
