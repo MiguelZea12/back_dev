@@ -4,14 +4,17 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 
 @Entity()
+@Unique(['document'])
+@Unique(['email'])
 export class Person {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   document: string;
 
   @Column({
@@ -27,7 +30,7 @@ export class Person {
   lastName: string;
 
   @Column({
-    nullable: true,
+    nullable: false,
     length: 100,
   })
   email: string;

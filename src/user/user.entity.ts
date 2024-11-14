@@ -19,11 +19,4 @@ export class User extends Person {
 
   @ManyToOne(() => Role, (role) => role.users)
   role: Role;
-
-  @Column({
-    nullable: false,
-    default: true,
-    type: 'boolean',
-  })
-  status: boolean;
 }

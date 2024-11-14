@@ -5,7 +5,7 @@ export class FiltersUserDto {
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value || undefined)
-  username?: string;
+  document?: string;
 
   @IsOptional()
   @IsString()

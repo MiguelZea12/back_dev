@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { RequestResetPasswordDto } from '@/auth/dto/requestResetPassword.dto';
 import { EmailService } from '@/services/email/email.service';
 import { ResetPasswordDto } from '@/auth/dto/resetPassword.dto';
+import { AuthUserDto } from '@/user/dto/authUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,7 @@ export class AuthService {
     private readonly emailService: EmailService,
   ) {}
 
-  async validateUser(document: string, password: string): Promise<any> {
+  async validateUser(document: string, password: string): Promise<AuthUserDto> {
     const user = await this.userService.findOneByDocument(document);
 
     if (!user) {
@@ -60,7 +61,8 @@ export class AuthService {
           id: userData.id,
           document: userData.document,
           name: userData.name,
-          role: userData.role,
+          lastname: userData.lastName,
+          role: userData.role.name_role,
         },
         access_token: this.jwtService.sign(payload),
       };

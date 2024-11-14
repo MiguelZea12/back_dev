@@ -11,6 +11,7 @@ import {
   Logger,
   Patch,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { UserService } from '@/user/user.service';
 import { GetUserDto } from '@/user/dto/getUser.dto';
@@ -106,6 +107,24 @@ export class UserController {
       const errMessage = 'Error al actualizar el usuario!';
 
       this.logger.error(errMessage, error.stack);
+      throw new HttpException(errMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param('id') id: number): Promise<void> {
+    this.logger.log(`Eliminando el usuario con ID: ${id}`);
+
+    try {
+      await this.userService.deleteUser(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      const errMessage = 'Error en la eliminación del Rol';
+
+      this.logger.error(errMessage);
+
       throw new HttpException(errMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

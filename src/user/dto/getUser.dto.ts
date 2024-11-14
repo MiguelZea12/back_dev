@@ -15,7 +15,11 @@ export class GetUserDto {
 
   @Expose()
   @IsString()
-  username: string;
+  name: string;
+
+  @Expose()
+  @IsString()
+  lastname: string;
 
   @Expose()
   @IsEmail()
@@ -24,10 +28,6 @@ export class GetUserDto {
   @Expose()
   @Type(() => GetRoleDto)
   role: GetRoleDto;
-
-  @Expose()
-  @IsBoolean()
-  status: boolean;
 
   @Expose()
   @IsOptional()
@@ -44,4 +44,8 @@ export class GetUserDto {
 
   @Expose()
   updatedAt: Date;
+
+  @Expose()
+  @IsBoolean()
+  deleted: boolean;
 }
