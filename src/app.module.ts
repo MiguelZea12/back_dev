@@ -13,7 +13,7 @@ import { UserModule } from '@/user/user.module';
 import { AuthModule } from '@/auth/auth.module';
 import { AuthMiddleware } from '@/middlewares/auth.middleware';
 import { PatientsModule } from '@/patients/patients.module';
-import { CaregiversModule } from '@/Caregiver/caregivers.module';
+import { CaregiversModule } from '@/caregiver/caregivers.module';
 import { RoleModule } from '@/role/role.module';
 import { TeamsModule } from '@/team/teams.module';
 import { AssignmentsModule } from '@/assignment/assignments.module';
