@@ -15,7 +15,11 @@ export class GetUserDto {
 
   @Expose()
   @IsString()
-  username: string;
+  name: string;
+
+  @Expose()
+  @IsString()
+  lastname: string;
 
   @Expose()
   @IsEmail()

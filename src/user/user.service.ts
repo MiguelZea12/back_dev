@@ -109,15 +109,15 @@ export class UserService {
   }
 
   async findAllFilter(filtersUserDto: FiltersUserDto): Promise<any> {
-    const { username, name_role, page = 1, limit = 10 } = filtersUserDto;
+    const { document, name_role, page = 1, limit = 10 } = filtersUserDto;
 
     const query = this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.role', 'role');
 
-    if (username) {
-      query.andWhere('user.username ILIKE :username', {
-        username: `%${username}%`,
+    if (document) {
+      query.andWhere('user.document ILIKE :document', {
+        document: `%${document}%`,
       });
     }
 
@@ -170,6 +170,16 @@ export class UserService {
       userDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await this.userRepository.findOne({
+      where: [{ document }, { email }],
+    });
+
+    if (user) {
+      const errorMsg = 'Un usuario con la misma cédula o email ya existe';
+      this.logger.error(errorMsg);
+      throw new HttpException(errorMsg, HttpStatus.BAD_REQUEST);
+    }
 
     const roleDb = await this.roleService.findByName(role.name_role);
 

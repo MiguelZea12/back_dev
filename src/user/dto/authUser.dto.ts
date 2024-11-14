@@ -1,3 +1,4 @@
+import { Role } from '@/role/role.entity';
 import { IsString, IsNumber, IsEmail, IsUUID } from 'class-validator';
 
 export class AuthUserDto {
@@ -21,4 +22,7 @@ export class AuthUserDto {
 
   @IsEmail()
   email: string;
+
+  @IsString()
+  role: Role;
 }
