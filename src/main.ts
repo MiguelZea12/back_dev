@@ -31,7 +31,7 @@ async function bootstrap() {
     .setDescription('Documentación de la API para el proyecto Vinculation')
     .setVersion('1.0')
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // La documentación estará disponible en /api
 
