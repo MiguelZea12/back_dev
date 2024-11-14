@@ -166,16 +166,8 @@ export class UserService {
   }
 
   async createUser(userDto: CreateUserDto): Promise<GetUserDto> {
-    const {
-      name,
-      lastName,
-      role,
-      password,
-      email,
-      document,
-      direction,
-      status,
-    } = userDto;
+    const { name, lastName, role, password, email, document, direction } =
+      userDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -189,7 +181,6 @@ export class UserService {
       email,
       document,
       direction,
-      status,
     });
 
     const savedUser = await this.userRepository.save(newUser);
@@ -238,5 +229,25 @@ export class UserService {
     this.logger.log(successMsg);
 
     return getUserDto;
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      const errorMsg = this.MessageNotFounded('ID', id);
+      this.logger.error(errorMsg);
+      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+    }
+
+    user.deleted = true;
+
+    await this.userRepository.save(user);
+
+    const successMsg = 'Usuario eliminado exitosamente!!!';
+
+    this.logger.log(successMsg);
   }
 }

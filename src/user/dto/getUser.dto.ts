@@ -26,10 +26,6 @@ export class GetUserDto {
   role: GetRoleDto;
 
   @Expose()
-  @IsBoolean()
-  status: boolean;
-
-  @Expose()
   @IsOptional()
   @IsString()
   document?: string;
@@ -44,4 +40,8 @@ export class GetUserDto {
 
   @Expose()
   updatedAt: Date;
+
+  @Expose()
+  @IsBoolean()
+  deleted: boolean;
 }
