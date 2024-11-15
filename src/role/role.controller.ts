@@ -12,6 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { RoleService } from '@/role/role.service';
+import { I18nService } from 'nestjs-i18n';
 import { GetRoleDto } from '@/role/dto/getRole.dto';
 import { CreateRoleDto } from '@/role/dto/createRole.dto';
 import { UpdateRoleDto } from '@/role/dto/updateRole.dto';
@@ -21,108 +22,88 @@ import { FiltersRoleDto } from '@/role/dto/filtersRole.dto';
 export class RoleController {
   private readonly logger = new Logger(RoleController.name);
 
-  constructor(private readonly roleService: RoleService) {}
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly i18n: I18nService,
+  ) {}
 
   @Get(':id')
-  async findRoleById(@Param('id') id: number): Promise<GetRoleDto> {
-    this.logger.log(`Buscando rol con ID: ${id}`);
+  async findRoleById(@Param('id') id: number): Promise<{ role: GetRoleDto; message: string }> {
+    const logMessage = await this.i18n.translate('finding_role_by_id', { args: { id } }) as string;
+    this.logger.log(logMessage);
 
     try {
-      return this.roleService.findByOneById(id);
+      const role = await this.roleService.findByOneById(id);
+      const message = await this.i18n.translate('role_found') as string;
+      return { role, message };
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      this.logger.error(`Rol no econtrado con ID: ${id}`, error.stack);
-
-      throw new HttpException(
-        `Rol no econtrado con ID: ${id}`,
-        HttpStatus.NOT_FOUND,
-      );
+      const errorMessage = await this.i18n.translate('error_role_not_found', { args: { id } }) as string;
+      this.logger.error(errorMessage, error.stack);
+      throw new HttpException(errorMessage, HttpStatus.NOT_FOUND);
     }
   }
 
   @Get()
-  async findAllFiltered(
-    @Query() filtersSiteDto: FiltersRoleDto,
-  ): Promise<GetRoleDto[]> {
-    this.logger.log('Obteniendo todos los Roles de la base de datos');
+  async findAllFiltered(@Query() filtersSiteDto: FiltersRoleDto): Promise<{ roles: GetRoleDto[]; message: string }> {
+    const logMessage = await this.i18n.translate('fetching_all_roles') as string;
+    this.logger.log(logMessage);
 
     try {
-      return await this.roleService.findAllFilter(filtersSiteDto);
+      const roles = await this.roleService.findAllFilter(filtersSiteDto);
+      const message = await this.i18n.translate('roles_list') as string;
+      return { roles, message };
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      const errMessage = 'Error al obtener los Roles';
-
-      this.logger.error(errMessage, error.stack);
-
-      throw new HttpException(errMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      const errorMessage = await this.i18n.translate('error_fetching_roles') as string;
+      this.logger.error(errorMessage, error.stack);
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Post()
-  async createRole(@Body() createRoleDto: CreateRoleDto): Promise<GetRoleDto> {
-    this.logger.log('Creando rol...');
+  async createRole(@Body() createRoleDto: CreateRoleDto): Promise<{ role: GetRoleDto; message: string }> {
+    const logMessage = await this.i18n.translate('creating_role') as string;
+    this.logger.log(logMessage);
 
     try {
       const role = await this.roleService.createRole(createRoleDto);
-
-      return role;
+      const message = await this.i18n.translate('role_created') as string;
+      return { role, message };
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      const errorMesagge = 'Error creando el rol';
-
-      this.logger.error(errorMesagge, error.stack);
-
-      throw new HttpException(errorMesagge, HttpStatus.INTERNAL_SERVER_ERROR);
+      const errorMessage = await this.i18n.translate('error_creating_role') as string;
+      this.logger.error(errorMessage, error.stack);
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Patch(':id')
-  async updateRole(
-    @Body() updateRoleDto: UpdateRoleDto,
-    @Param('id') id: number,
-  ): Promise<GetRoleDto> {
-    this.logger.log(`Actualizando usuario con ID: ${id}....`);
+  async updateRole(@Body() updateRoleDto: UpdateRoleDto, @Param('id') id: number): Promise<{ role: GetRoleDto; message: string }> {
+    const logMessage = await this.i18n.translate('updating_role', { args: { id } }) as string;
+    this.logger.log(logMessage);
 
     try {
       const updatedRole = await this.roleService.updateRole(id, updateRoleDto);
-
-      return updatedRole;
+      const message = await this.i18n.translate('role_updated', { args: { id } }) as string;
+      return { role: updatedRole, message };
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      const errMessage = 'Error al actualizar el Rol!!';
-
-      this.logger.error(errMessage, error.stack);
-      throw new HttpException(errMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      const errorMessage = await this.i18n.translate('error_updating_role') as string;
+      this.logger.error(errorMessage, error.stack);
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Delete(':id')
-  async deleteRole(@Param('id') id: number): Promise<void> {
-    this.logger.log(`Eliminando el rol con ID: ${id}`);
+  async deleteRole(@Param('id') id: number): Promise<{ message: string }> {
+    const logMessage = await this.i18n.translate('deleting_role', { args: { id } }) as string;
+    this.logger.log(logMessage);
 
     try {
       await this.roleService.deleteRole(id);
+      const message = await this.i18n.translate('role_deleted') as string;
+      return { message };
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      const errMessage = 'Error en la eliminación del Rol';
-
-      this.logger.error(errMessage);
-
-      throw new HttpException(errMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      const errorMessage = await this.i18n.translate('error_deleting_role') as string;
+      this.logger.error(errorMessage, error.stack);
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

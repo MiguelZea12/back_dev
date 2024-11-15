@@ -1,0 +1,47 @@
+{
+    "user": {
+      "user_created": "User created successfully",
+      "user_deleted": "User deleted successfully",
+      "user_updated": "User updated successfully",
+      "user_found": "User found successfully",
+      "finding_user_by_id": "Finding user with ID: {{id}}",
+      "fetching_all_users": "Fetching all users from the database",
+      "users_list": "Users list retrieved successfully",
+      "creating_user": "Creating user...",
+      "updating_user": "Updating user with ID: {{id}}"
+    },
+    
+    "role": {
+      "role_created": "Role created successfully",
+      "role_deleted": "Role deleted successfully",
+      "role_updated": "Role updated successfully",
+      "role_found": "Role found successfully",
+      "finding_role_by_id": "Finding role with ID: {{id}}",
+      "fetching_all_roles": "Fetching all roles from the database",
+      "roles_list": "Roles list retrieved successfully",
+      "creating_role": "Creating role...",
+      "updating_role": "Updating role with ID: {{id}}",
+      "deleting_role": "Deleting role with ID: {{id}}"
+    },
+  
+    "assignment": {
+      "assignment_created": "Assignment created successfully",
+      "assignment_deleted": "Assignment deleted successfully",
+      "assignment_updated": "Assignment updated successfully",
+      "assignments_list": "Assignments list retrieved successfully",
+      "assignments_by_team": "Assignments retrieved by team successfully"
+    },
+  
+    "auth": {
+      "login_success": "Login successful",
+      "requesting_password_reset": "Requesting password reset...",
+      "password_reset_requested": "Password reset requested successfully",
+      "resetting_password": "Resetting password...",
+      "password_reset_success": "Password reset successful"
+    },
+  
+    "email": {
+      "email_sent_success": "Email sent successfully"
+    }
+  }
+  

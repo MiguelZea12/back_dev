@@ -1,0 +1,29 @@
+{
+    "user": {
+      "error_user_not_found": "Usuario no encontrado con ID: {{id}}",
+      "error_fetching_users": "Error al obtener los usuarios",
+      "error_creating_user": "Error creando el usuario",
+      "error_updating_user": "Error al actualizar el usuario"
+    },
+    
+    "role": {
+      "error_role_not_found": "Rol no encontrado con ID: {{id}}",
+      "error_fetching_roles": "Error al obtener los roles",
+      "error_creating_role": "Error creando el rol",
+      "error_updating_role": "Error al actualizar el rol",
+      "error_deleting_role": "Error en la eliminación del rol"
+    },
+  
+    "assignment": {
+      "error_assignment_not_found": "Asignación no encontrada"
+    },
+  
+    "auth": {
+      "error_invalid_credentials": "Credenciales inválidas"
+    },
+  
+    "email": {
+      "email_send_error": "Error en el envío del correo electrónico"
+    }
+  }
+  
