@@ -14,6 +14,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from '@/user/user.service';
+import { I18nService } from 'nestjs-i18n';
 import { GetUserDto } from '@/user/dto/getUser.dto';
 import { CreateUserDto } from '@/user/dto/createUser.dto';
 import { UpdateUserDto } from '@/user/dto/updateUser.dto';
@@ -24,65 +25,59 @@ import { FiltersUserDto } from './dto/filtersUser.dto';
 export class UserController {
   private readonly logger = new Logger(UserController.name);
 
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly i18n: I18nService,
+  ) {}
 
   @Get(':id')
-  async findRoleById(@Param('id') id: number): Promise<GetUserDto> {
-    this.logger.log(`Buscando usuario con ID: ${id}`);
+  async findRoleById(@Param('id') id: number): Promise<{ user: GetUserDto; message: string }> {
+    const logMessage = await this.i18n.translate('finding_user_by_id', { args: { id } }) as string;
+    this.logger.log(logMessage);
 
     try {
-      return this.userService.findByOneById(id);
+      const user = await this.userService.findByOneById(id);
+      const message = await this.i18n.translate('user_found') as string;
+      return { user, message };
     } catch (error) {
-      this.logger.error(`Usuario no econtrado con ID: ${id}`, error.stack);
-
-      throw new HttpException(
-        `Usuario no econtrado con ID: ${id}`,
-        HttpStatus.NOT_FOUND,
-      );
+      const errorMessage = await this.i18n.translate('error_user_not_found', { args: { id } }) as string;
+      this.logger.error(errorMessage, error.stack);
+      throw new HttpException(errorMessage, HttpStatus.NOT_FOUND);
     }
   }
 
   @Get()
   async findAllFiltered(
     @Query() filtersUserDto: FiltersUserDto,
-  ): Promise<GetUserDto[]> {
-    this.logger.log('Obteniendo todos los Usuarios de la base de datos.');
+  ): Promise<{ users: GetUserDto[]; message: string }> {
+    const logMessage = await this.i18n.translate('fetching_all_users') as string;
+    this.logger.log(logMessage);
 
     try {
-      return await this.userService.findAllFilter(filtersUserDto);
+      const users = await this.userService.findAllFilter(filtersUserDto);
+      const message = await this.i18n.translate('users_list') as string;
+      return { users, message };
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      const errMessage = 'Error al obtener los usuarios';
-
-      this.logger.error(errMessage, error.stack);
-
-      throw new HttpException(errMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      const errorMessage = await this.i18n.translate('error_fetching_users') as string;
+      this.logger.error(errorMessage, error.stack);
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Post()
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<GetUserDto> {
-    this.logger.log('Creando usuario..');
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<{ user: GetUserDto; message: string }> {
+    const logMessage = await this.i18n.translate('creating_user') as string;
+    this.logger.log(logMessage);
 
     try {
       const user = await this.userService.createUser(createUserDto);
-
-      this.logger.log('Usuario creado exitosamente!!');
-
-      return user;
+      const message = await this.i18n.translate('user_created') as string;
+      this.logger.log(message);
+      return { user, message };
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      const errorMesagge = 'Error creando el usuario';
-
-      this.logger.error(errorMesagge, error.stack);
-
-      throw new HttpException(errorMesagge, HttpStatus.INTERNAL_SERVER_ERROR);
+      const errorMessage = await this.i18n.translate('error_creating_user') as string;
+      this.logger.error(errorMessage, error.stack);
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -90,24 +85,19 @@ export class UserController {
   async updateUser(
     @Body() updateUserDto: UpdateUserDto,
     @Param('id') id: number,
-  ): Promise<GetUserDto> {
-    this.logger.log(`Actualizando usuario con ID: ${id}`);
+  ): Promise<{ user: GetUserDto; message: string }> {
+    const logMessage = await this.i18n.translate('updating_user', { args: { id } }) as string;
+    this.logger.log(logMessage);
 
     try {
       const updatedUser = await this.userService.updateUser(id, updateUserDto);
-
-      this.logger.log(`Usuarion con ID: ${id}, actualizado existosamente`);
-
-      return updatedUser;
+      const message = await this.i18n.translate('user_updated', { args: { id } }) as string;
+      this.logger.log(message);
+      return { user: updatedUser, message };
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      const errMessage = 'Error al actualizar el usuario!';
-
-      this.logger.error(errMessage, error.stack);
-      throw new HttpException(errMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      const errorMessage = await this.i18n.translate('error_updating_user') as string;
+      this.logger.error(errorMessage, error.stack);
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

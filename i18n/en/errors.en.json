@@ -1,0 +1,43 @@
+{
+  "user": {
+    "error_user_not_found": "User not found with ID: {{id}}",
+    "error_fetching_users": "Error fetching users",
+    "error_creating_user": "Error creating user",
+    "error_updating_user": "Error updating user"
+  },
+
+  "role": {
+    "error_role_not_found": "Role not found with ID: {{id}}",
+    "error_fetching_roles": "Error fetching roles",
+    "error_creating_role": "Error creating role",
+    "error_updating_role": "Error updating role",
+    "error_deleting_role": "Error deleting role"
+  },
+
+  "assignment": {
+    "error_assignment_not_found": "Assignment not found"
+  },
+
+  "auth": {
+    "error_invalid_credentials": "Invalid credentials",
+    "login_error": "Error during login",
+    "reset_password_email_error": "Error sending password reset email",
+    "reset_password_error": "Error resetting the user's password"
+  },
+
+  "email": {
+    "email_send_error": "Error sending the email"
+  },
+
+  "workgroup": {
+    "not_found": "WorkGroup with ID {{id}} not found"
+  },
+
+  "team": {
+    "error_team_not_found": "Team not found with ID: {{id}}",
+    "error_fetching_teams": "Error fetching teams",
+    "error_creating_team": "Error creating team",
+    "error_updating_team": "Error updating team",
+    "error_deleting_team": "Error deleting team"
+  }
+}

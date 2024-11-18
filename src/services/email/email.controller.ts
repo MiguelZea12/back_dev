@@ -7,11 +7,15 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { EmailService } from './email.service';
+import { I18nService } from 'nestjs-i18n';
 import { Response } from 'express';
 
 @Controller('email')
 export class EmailController {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly i18n: I18nService,
+  ) {}
 
   @Post('send')
   async sendEmail(
@@ -33,13 +37,14 @@ export class EmailController {
         htmlContent,
       );
 
-      res.status(HttpStatus.OK).send();
+      const successMessage = await this.i18n.translate('email_sent_success') as string;
+      res.status(HttpStatus.OK).json({ message: successMessage });
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
       }
 
-      const errorMessage = 'Error en el envió del correo electrónico';
+      const errorMessage = await this.i18n.translate('email_send_error') as string;
 
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
