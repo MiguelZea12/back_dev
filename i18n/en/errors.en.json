@@ -15,7 +15,12 @@
   },
 
   "assignment": {
-    "error_assignment_not_found": "Assignment not found"
+    "error_assignment_not_found": "Assignment not found",
+    "error_fetching_assignments": "Error fetching assignments",
+    "error_fetching_by_team": "Error fetching assignments for team ID: {{teamId}}",
+    "error_creating_assignment": "Error creating assignment",
+    "error_updating_assignment": "Error updating assignment with ID: {{id}}",
+    "error_deleting_assignment": "Error deleting assignment with ID: {{id}}"
   },
 
   "auth": {

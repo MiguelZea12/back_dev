@@ -21,7 +21,7 @@ export class WorkGroupsService {
   async findOne(id: number): Promise<WorkGroup> {
     const workGroup = await this.workGroupRepository.findOne({ where: { id }, relations: ['teams'] });
     if (!workGroup) {
-      const errorMessage = await this.i18n.translate('errors.workgroup.not_found', { args: { id } }) as string;
+      const errorMessage = await this.i18n.translate('workgroup.errors.not_found', { args: { id } }) as string;
       throw new NotFoundException(errorMessage);
     }
     return workGroup;
@@ -30,7 +30,7 @@ export class WorkGroupsService {
   async create(createWorkGroupDto: CreateWorkGroupDto): Promise<{ workGroup: WorkGroup; message: string }> {
     const workGroup = this.workGroupRepository.create(createWorkGroupDto);
     const savedWorkGroup = await this.workGroupRepository.save(workGroup);
-    const message = await this.i18n.translate('workgroup.created') as string;
+    const message = await this.i18n.translate('workgroup.success.created') as string;
     return { workGroup: savedWorkGroup, message };
   }
 
@@ -38,17 +38,17 @@ export class WorkGroupsService {
     const workGroup = await this.findOne(id);
     Object.assign(workGroup, updateWorkGroupDto);
     const updatedWorkGroup = await this.workGroupRepository.save(workGroup);
-    const message = await this.i18n.translate('workgroup.updated', { args: { id } }) as string;
+    const message = await this.i18n.translate('workgroup.success.updated', { args: { id } }) as string;
     return { workGroup: updatedWorkGroup, message };
   }
 
   async remove(id: number): Promise<{ message: string }> {
     const result = await this.workGroupRepository.delete(id);
     if (result.affected === 0) {
-      const errorMessage = await this.i18n.translate('errors.workgroup.not_found', { args: { id } }) as string;
+      const errorMessage = await this.i18n.translate('workgroup.errors.not_found', { args: { id } }) as string;
       throw new NotFoundException(errorMessage);
     }
-    const message = await this.i18n.translate('workgroup.deleted', { args: { id } }) as string;
+    const message = await this.i18n.translate('workgroup.success.deleted', { args: { id } }) as string;
     return { message };
   }
 }

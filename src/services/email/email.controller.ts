@@ -37,14 +37,16 @@ export class EmailController {
         htmlContent,
       );
 
-      const successMessage = await this.i18n.translate('email_sent_success') as string;
+      // Mensaje de éxito
+      const successMessage = await this.i18n.translate('email.email_sent_success') as string;
       res.status(HttpStatus.OK).json({ message: successMessage });
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
       }
 
-      const errorMessage = await this.i18n.translate('email_send_error') as string;
+      // Mensaje de error
+      const errorMessage = await this.i18n.translate('email.email_send_error') as string;
 
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

@@ -1,21 +1,26 @@
 {
   "user": {
     "error_user_not_found": "Usuario no encontrado con ID: {{id}}",
-    "error_fetching_users": "Error obteniendo los usuarios",
-    "error_creating_user": "Error creando el usuario",
-    "error_updating_user": "Error actualizando el usuario"
+    "error_fetching_users": "Error al obtener los usuarios",
+    "error_creating_user": "Error al crear el usuario",
+    "error_updating_user": "Error al actualizar el usuario"
   },
 
   "role": {
     "error_role_not_found": "Rol no encontrado con ID: {{id}}",
-    "error_fetching_roles": "Error obteniendo roles",
-    "error_creando_role": "Error creando el rol",
-    "error_updating_role": "Error actualizando el rol",
-    "error_deleting_role": "Error eliminando el rol"
+    "error_fetching_roles": "Error al obtener los roles",
+    "error_creating_role": "Error al crear el rol",
+    "error_updating_role": "Error al actualizar el rol",
+    "error_deleting_role": "Error al eliminar el rol"
   },
 
   "assignment": {
-    "error_assignment_not_found": "Asignación no encontrada"
+    "error_assignment_not_found": "Asignación no encontrada",
+    "error_fetching_assignments": "Error al obtener las asignaciones",
+    "error_fetching_by_team": "Error al obtener asignaciones para el equipo con ID: {{teamId}}",
+    "error_creating_assignment": "Error al crear la asignación",
+    "error_updating_assignment": "Error al actualizar la asignación con ID: {{id}}",
+    "error_deleting_assignment": "Error al eliminar la asignación con ID: {{id}}"
   },
 
   "auth": {
@@ -26,7 +31,7 @@
   },
 
   "email": {
-    "email_send_error": "Error en el envío del correo electrónico"
+    "email_send_error": "Error al enviar el correo electrónico"
   },
 
   "workgroup": {
@@ -35,9 +40,9 @@
 
   "team": {
     "error_team_not_found": "Equipo no encontrado con ID: {{id}}",
-    "error_fetching_teams": "Error obteniendo equipos",
-    "error_creating_team": "Error creando el equipo",
-    "error_updating_team": "Error actualizando el equipo",
-    "error_deleting_team": "Error eliminando el equipo"
+    "error_fetching_teams": "Error al obtener los equipos",
+    "error_creating_team": "Error al crear el equipo",
+    "error_updating_team": "Error al actualizar el equipo",
+    "error_deleting_team": "Error al eliminar el equipo"
   }
 }

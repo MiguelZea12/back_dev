@@ -29,17 +29,22 @@
     "assignment_deleted": "Asignación eliminada exitosamente",
     "assignment_updated": "Asignación actualizada exitosamente",
     "assignments_list": "Lista de asignaciones obtenida exitosamente",
-    "assignments_by_team": "Asignaciones obtenidas por equipo exitosamente"
+    "assignments_by_team": "Asignaciones obtenidas por equipo exitosamente",
+    "fetching_all": "Obteniendo todas las asignaciones...",
+    "fetching_by_team": "Obteniendo asignaciones para el equipo con ID: {{teamId}}...",
+    "creating_assignment": "Creando asignación...",
+    "updating_assignment": "Actualizando asignación con ID: {{id}}...",
+    "deleting_assignment": "Eliminando asignación con ID: {{id}}..."
   },
 
   "auth": {
     "login_success": "Inicio de sesión exitoso",
     "requesting_password_reset": "Solicitando restablecimiento de contraseña...",
-    "password_reset_requested": "Solicitud de restablecimiento de contraseña enviada exitosamente",
+    "password_reset_requested": "Solicitud de restablecimiento de contraseña exitosa",
     "resetting_password": "Restableciendo contraseña...",
     "password_reset_success": "Contraseña restablecida exitosamente",
     "reset_password_token_created": "Token para restablecer contraseña creado exitosamente",
-    "sending_reset_password_email": "Intentando enviar correo de restablecimiento de contraseña",
+    "sending_reset_password_email": "Intentando enviar el correo de restablecimiento de contraseña",
     "reset_password_email_sent": "Correo de restablecimiento de contraseña enviado exitosamente",
     "reset_password_email_message": "Se ha enviado un correo electrónico para restablecer tu contraseña"
   },

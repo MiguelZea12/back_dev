@@ -29,7 +29,12 @@
     "assignment_deleted": "Assignment deleted successfully",
     "assignment_updated": "Assignment updated successfully",
     "assignments_list": "Assignments list retrieved successfully",
-    "assignments_by_team": "Assignments retrieved by team successfully"
+    "assignments_by_team": "Assignments retrieved by team successfully",
+    "fetching_all": "Fetching all assignments...",
+    "fetching_by_team": "Fetching assignments for team ID: {{teamId}}...",
+    "creating_assignment": "Creating assignment...",
+    "updating_assignment": "Updating assignment with ID: {{id}}...",
+    "deleting_assignment": "Deleting assignment with ID: {{id}}..."
   },
 
   "auth": {
