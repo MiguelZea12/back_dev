@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
+import { I18nService } from 'nestjs-i18n';
 import { User } from '@/user/user.entity';
 import { AuthUserDto } from '@/user/dto/authUser.dto';
 import { GetUserDto } from '@/user/dto/getUser.dto';
@@ -25,18 +26,15 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly roleService: RoleService,
+    private readonly i18n: I18nService, // Inyección de I18nService
   ) {}
-
-  // Const Message for Not Found
-  private MessageNotFounded(option: string, key: any) {
-    return `Usuario con ${option}: ${key}, no encontrado.`;
-  }
 
   private async createHttpException(
     messageKey: string,
+    args?: Record<string, any>,
     status: HttpStatus = HttpStatus.NOT_FOUND,
   ): Promise<HttpException> {
-    const errorMsg = messageKey as string;
+    const errorMsg = await this.i18n.translate(messageKey, { args }) as string;
 
     this.logger.error(errorMsg);
     return new HttpException(errorMsg, status);
@@ -49,9 +47,10 @@ export class UserService {
     });
 
     if (!user) {
-      const errorMsg = this.MessageNotFounded('numero de cédula', document);
-      this.logger.error(errorMsg);
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+      throw await this.createHttpException('errors.user.not_found', {
+        key: 'document',
+        value: document,
+      });
     }
 
     return user;
@@ -64,11 +63,10 @@ export class UserService {
     });
 
     if (!user) {
-      const errorMsg = this.MessageNotFounded('ID', id);
-
-      this.logger.error(errorMsg);
-
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+      throw await this.createHttpException('errors.user.not_found', {
+        key: 'ID',
+        value: id,
+      });
     }
 
     return plainToInstance(GetUserDto, user, {
@@ -82,10 +80,10 @@ export class UserService {
     });
 
     if (!user) {
-      const errorMsg = this.MessageNotFounded('email', email);
-
-      this.logger.error(errorMsg);
-      throw new NotFoundException(errorMsg);
+      throw await this.createHttpException('errors.user.not_found', {
+        key: 'email',
+        value: email,
+      });
     }
 
     return user;
@@ -100,9 +98,10 @@ export class UserService {
     });
 
     if (!user) {
-      const errorMsg = 'Usuario no encontrado';
-      this.logger.error(errorMsg);
-      throw new NotFoundException(errorMsg);
+      throw await this.createHttpException('errors.user.not_found', {
+        key: 'resetPasswordToken',
+        value: resetPasswordToken,
+      });
     }
 
     return user;
@@ -127,15 +126,12 @@ export class UserService {
       });
     }
 
-    // Order by createdAt in descending order
     query.orderBy('user.createdAt', 'DESC');
-
     query.skip((page - 1) * limit).take(limit);
 
     try {
       const [users, totalCount] = await query.getManyAndCount();
-
-      this.logger.log('Buscando usuarios..');
+      this.logger.log(await this.i18n.translate('user.searching'));
 
       const totalPages = Math.ceil(totalCount / limit);
 
@@ -145,98 +141,59 @@ export class UserService {
         }),
       );
 
-      const userPaginated: any = {
+      return {
         data: userDtos,
         totalCount,
-        userPerPage: userDtos.length,
         totalPages,
       };
-
-      return {
-        UserPaginated: userPaginated,
-        totalCount,
-      };
     } catch (error) {
-      const errorMessage = 'Error buscando los usuarios';
-
-      this.logger.error(errorMessage, error.stack);
-
-      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw await this.createHttpException('errors.user.search_failed', {}, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async createUser(userDto: CreateUserDto): Promise<GetUserDto> {
-    const {
-      name,
-      lastName,
-      role,
-      password,
-      email,
-      document,
-      direction,
-      status,
-    } = userDto;
+    const { role, password, ...otherFields } = userDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const roleDb = await this.roleService.findByName(role.name_role);
 
     const newUser = this.userRepository.create({
-      name,
-      lastName,
+      ...otherFields,
       role: roleDb,
       password: hashedPassword,
-      email,
-      document,
-      direction,
-      status,
     });
 
     const savedUser = await this.userRepository.save(newUser);
 
-    const getUserDto = plainToInstance(GetUserDto, savedUser, {
+    this.logger.log(await this.i18n.translate('user.created'));
+
+    return plainToInstance(GetUserDto, savedUser, {
       excludeExtraneousValues: true,
     });
-
-    const successMsg = 'El usuario ha sido creado existosamente!!';
-    this.logger.log(successMsg);
-
-    return getUserDto;
   }
 
   async updateUser(
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<GetUserDto> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-    });
-    if (!user) {
-      const errorMsg = this.MessageNotFounded('ID', id);
-      this.logger.error(errorMsg);
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
-    }
+    const user = await this.findByOneById(id);
 
-    if (Object.keys(updateUserDto).length === 0) {
-      const errorMsg = 'Los datos a actualizar no pueden estar vacios';
-
-      this.logger.error(errorMsg);
-      throw new HttpException(errorMsg, HttpStatus.BAD_REQUEST);
+    if (!Object.keys(updateUserDto).length) {
+      throw await this.createHttpException('errors.user.update_empty_data', {}, HttpStatus.BAD_REQUEST);
     }
 
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
 
+    Object.assign(user, updateUserDto);
+
     const updatedUser = await this.userRepository.save(user);
 
-    const getUserDto = plainToInstance(GetUserDto, updatedUser, {
+    this.logger.log(await this.i18n.translate('user.updated'));
+
+    return plainToInstance(GetUserDto, updatedUser, {
       excludeExtraneousValues: true,
     });
-
-    const successMsg = 'El usuario ha sido actualizado existosamente!!';
-    this.logger.log(successMsg);
-
-    return getUserDto;
   }
 }

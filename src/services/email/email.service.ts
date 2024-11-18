@@ -1,6 +1,7 @@
 import { EmailTemplateService } from '@/email-template/email-template.service';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { I18nService } from 'nestjs-i18n';
 import axios from 'axios';
 
 @Injectable()
@@ -8,6 +9,7 @@ export class EmailService {
   constructor(
     private readonly configService: ConfigService,
     private readonly emailTemplateService: EmailTemplateService,
+    private readonly i18n: I18nService, // Inyección de I18nService
   ) {}
 
   async sendEmail(
@@ -45,7 +47,7 @@ export class EmailService {
         },
       });
     } catch (error) {
-      const errorMessage = 'Error en el envió del correo electrónico';
+      const errorMessage = await this.i18n.translate('errors.email.send_error') as string;
       throw new InternalServerErrorException(errorMessage, error.message);
     }
   }
@@ -55,7 +57,6 @@ export class EmailService {
     name: string,
     resetPasswordUrl: string,
   ): Promise<void> {
-    // Data to insert into the template
     const context = {
       name,
       url: resetPasswordUrl,
@@ -67,9 +68,12 @@ export class EmailService {
       context,
     );
 
-    // Obtain the email for sender
+    // Obtain the sender email
     const senderEmail: string =
       this.configService.get<string>('EMAIL_SOFTWARE');
+
+    // Localized subject
+    const subject = await this.i18n.translate('email.reset_password_subject') as string;
 
     // Send the email with the generated content
     await this.sendEmail(
@@ -77,7 +81,7 @@ export class EmailService {
       senderEmail,
       name,
       email,
-      'Solicitud para Restablecer Contraseña',
+      subject,
       htmlContent,
     );
   }

@@ -1,29 +1,43 @@
 {
-    "user": {
-      "error_user_not_found": "Usuario no encontrado con ID: {{id}}",
-      "error_fetching_users": "Error al obtener los usuarios",
-      "error_creating_user": "Error creando el usuario",
-      "error_updating_user": "Error al actualizar el usuario"
-    },
-    
-    "role": {
-      "error_role_not_found": "Rol no encontrado con ID: {{id}}",
-      "error_fetching_roles": "Error al obtener los roles",
-      "error_creating_role": "Error creando el rol",
-      "error_updating_role": "Error al actualizar el rol",
-      "error_deleting_role": "Error en la eliminación del rol"
-    },
-  
-    "assignment": {
-      "error_assignment_not_found": "Asignación no encontrada"
-    },
-  
-    "auth": {
-      "error_invalid_credentials": "Credenciales inválidas"
-    },
-  
-    "email": {
-      "email_send_error": "Error en el envío del correo electrónico"
-    }
+  "user": {
+    "error_user_not_found": "Usuario no encontrado con ID: {{id}}",
+    "error_fetching_users": "Error obteniendo los usuarios",
+    "error_creating_user": "Error creando el usuario",
+    "error_updating_user": "Error actualizando el usuario"
+  },
+
+  "role": {
+    "error_role_not_found": "Rol no encontrado con ID: {{id}}",
+    "error_fetching_roles": "Error obteniendo roles",
+    "error_creando_role": "Error creando el rol",
+    "error_updating_role": "Error actualizando el rol",
+    "error_deleting_role": "Error eliminando el rol"
+  },
+
+  "assignment": {
+    "error_assignment_not_found": "Asignación no encontrada"
+  },
+
+  "auth": {
+    "error_invalid_credentials": "Credenciales inválidas",
+    "login_error": "Error durante el inicio de sesión",
+    "reset_password_email_error": "Error al enviar el correo de restablecimiento de contraseña",
+    "reset_password_error": "Error al restablecer la contraseña del usuario"
+  },
+
+  "email": {
+    "email_send_error": "Error en el envío del correo electrónico"
+  },
+
+  "workgroup": {
+    "not_found": "Grupo de trabajo con ID {{id}} no encontrado"
+  },
+
+  "team": {
+    "error_team_not_found": "Equipo no encontrado con ID: {{id}}",
+    "error_fetching_teams": "Error obteniendo equipos",
+    "error_creating_team": "Error creando el equipo",
+    "error_updating_team": "Error actualizando el equipo",
+    "error_deleting_team": "Error eliminando el equipo"
   }
-  
+}
