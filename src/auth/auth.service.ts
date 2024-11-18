@@ -10,7 +10,6 @@ import { ConfigService } from '@nestjs/config';
 import { RequestResetPasswordDto } from '@/auth/dto/requestResetPassword.dto';
 import { EmailService } from '@/services/email/email.service';
 import { ResetPasswordDto } from '@/auth/dto/resetPassword.dto';
-import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class AuthService {
@@ -23,16 +22,13 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
-    private readonly i18n: I18nService, // Inyección de I18nService
   ) {}
 
   async validateUser(document: string, password: string): Promise<any> {
     const user = await this.userService.findOneByDocument(document);
 
     if (!user) {
-      const errorMessage = await this.i18n.translate('errors.user.not_found', {
-        args: { key: 'document', value: document },
-      });
+      const errorMessage = 'Usuario no econtrado';
       this.logger.error(errorMessage);
       throw new HttpException(errorMessage, HttpStatus.NOT_FOUND);
     }
@@ -40,10 +36,10 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      const errorMessage = await this.i18n.translate(
-        'errors.auth.invalid_credentials',
-      );
+      const errorMessage = 'Credeciales invalidas';
+
       this.logger.error(errorMessage);
+
       throw new HttpException(errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
@@ -69,18 +65,22 @@ export class AuthService {
         access_token: this.jwtService.sign(payload),
       };
     } catch (error) {
+      // See if the user was not found or the credentials are invalid
       if (
         error.status === HttpStatus.NOT_FOUND ||
         error.status === HttpStatus.UNAUTHORIZED
       ) {
         throw new HttpException(error.message, error.status);
       } else {
-        const errorMessage = await this.i18n.translate('errors.auth.login_error');
-        throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException(
+          'Error en el inicio de sesión',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
   }
 
+  // Request to reset password
   async requestResetPassword(
     requestResetPassword: RequestResetPasswordDto,
   ): Promise<any> {
@@ -95,41 +95,44 @@ export class AuthService {
       await this.userRepository.save(user);
 
       this.logger.log(
-        await this.i18n.translate('auth.reset_password_token_created'),
+        'Token para restablecer contraseña creado exitosamente!!',
       );
 
+      // Create the URL to send in the email
       const apiUrl = this.configService.get<string>('NEXT_PUBLIC_FRONTEND_URL');
       const resetPasswordUrl = `${apiUrl}/reset-password/${resetPasswordToken}`;
 
       this.logger.log(
-        await this.i18n.translate('auth.sending_reset_password_email'),
+        'Intentando crear el email para restablecer la contraseña',
       );
 
+      // Create the HTML content and send the email
       await this.emailService.sendResetPasswordEmail(
         email,
         user.name,
         resetPasswordUrl,
       );
 
-      this.logger.log(
-        await this.i18n.translate('auth.reset_password_email_sent'),
-      );
+      this.logger.log('Email para restablecer la contraseña enviado!!');
 
       return {
-        message: await this.i18n.translate('auth.reset_password_email_message'),
+        message:
+          'Se ha enviado un correo electrónico para reestablecer tu contraseña',
       };
     } catch (error) {
+      // See if the user was not found
       if (error.status === HttpStatus.NOT_FOUND) {
         throw new HttpException(error.message, error.status);
       } else {
-        const errorMessage = await this.i18n.translate(
-          'errors.auth.reset_password_email_error',
+        throw new HttpException(
+          'Error al enviar el correo electrónico para restablecer la contraseña',
+          HttpStatus.INTERNAL_SERVER_ERROR,
         );
-        throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
   }
 
+  // Reset the password
   async resetPassword(resetPassword: ResetPasswordDto): Promise<any> {
     const { resetPasswordToken, password } = resetPassword;
 
@@ -140,23 +143,22 @@ export class AuthService {
       user.password = await bcrypt.hash(password, 10);
       user.resetPasswordToken = null;
 
-      await this.userRepository.save(user);
+      this.userRepository.save(user);
 
-      this.logger.log(
-        await this.i18n.translate('auth.password_reset_success'),
-      );
+      this.logger.log('Contraseña restablecida exitosamente');
 
       return {
-        message: await this.i18n.translate('auth.password_reset_success'),
+        message: 'Contraseña restablecida exitosamente',
       };
     } catch (error) {
+      // See if the user was not found
       if (error.status === HttpStatus.NOT_FOUND) {
         throw new HttpException(error.message, error.status);
       } else {
-        const errorMessage = await this.i18n.translate(
-          'errors.auth.reset_password_error',
+        throw new HttpException(
+          'Error al intentar cambiar la contraseña del usuario',
+          HttpStatus.INTERNAL_SERVER_ERROR,
         );
-        throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
   }
