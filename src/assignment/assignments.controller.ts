@@ -16,15 +16,13 @@ export class AssignmentsController {
 
   @Get()
   async findAll(): Promise<{ assignments: Assignment[]; message: string }> {
-    const logMessage = await this.i18n.translate('assignment.fetching_all') as string;
+    const logMessage = await this.i18n.translate('assignment.fetching_all');
     this.logger.log(logMessage);
 
     try {
-      const assignments = await this.assignmentsService.findAll();
-      const message = await this.i18n.translate('assignment.assignments_list') as string;
-      return { assignments, message };
+      return await this.assignmentsService.findAll();
     } catch (error) {
-      const errorMessage = await this.i18n.translate('assignment.error_fetching_assignments') as string;
+      const errorMessage = await this.i18n.translate('assignment.errors.fetch_all');
       this.logger.error(errorMessage, error.stack);
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -34,15 +32,13 @@ export class AssignmentsController {
   async findByTeamId(
     @Param('teamId') teamId: number,
   ): Promise<{ assignments: Assignment[]; message: string }> {
-    const logMessage = await this.i18n.translate('assignment.fetching_by_team', { args: { teamId } }) as string;
+    const logMessage = await this.i18n.translate('assignment.fetching_by_team', { args: { teamId } });
     this.logger.log(logMessage);
 
     try {
-      const assignments = await this.assignmentsService.findByTeamId(teamId);
-      const message = await this.i18n.translate('assignment.assignments_by_team') as string;
-      return { assignments, message };
+      return await this.assignmentsService.findByTeamId(teamId);
     } catch (error) {
-      const errorMessage = await this.i18n.translate('assignment.error_fetching_by_team', { args: { teamId } }) as string;
+      const errorMessage = await this.i18n.translate('assignment.errors.fetch_by_team', { args: { teamId } });
       this.logger.error(errorMessage, error.stack);
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -50,15 +46,13 @@ export class AssignmentsController {
 
   @Post()
   async create(@Body() createAssignmentDto: CreateAssignmentDto): Promise<{ assignment: Assignment; message: string }> {
-    const logMessage = await this.i18n.translate('assignment.creating_assignment') as string;
+    const logMessage = await this.i18n.translate('assignment.creating_assignment');
     this.logger.log(logMessage);
 
     try {
-      const assignment = await this.assignmentsService.create(createAssignmentDto);
-      const message = await this.i18n.translate('assignment.assignment_created') as string;
-      return { assignment, message };
+      return await this.assignmentsService.create(createAssignmentDto);
     } catch (error) {
-      const errorMessage = await this.i18n.translate('assignment.error_creating_assignment') as string;
+      const errorMessage = await this.i18n.translate('assignment.errors.creating_assignment');
       this.logger.error(errorMessage, error.stack);
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -69,15 +63,13 @@ export class AssignmentsController {
     @Param('id') id: number,
     @Body() updateAssignmentDto: UpdateAssignmentDto,
   ): Promise<{ assignment: Assignment; message: string }> {
-    const logMessage = await this.i18n.translate('assignment.updating_assignment', { args: { id } }) as string;
+    const logMessage = await this.i18n.translate('assignment.updating_assignment', { args: { id } });
     this.logger.log(logMessage);
 
     try {
-      const assignment = await this.assignmentsService.update(id, updateAssignmentDto);
-      const message = await this.i18n.translate('assignment.assignment_updated', { args: { id } }) as string;
-      return { assignment, message };
+      return await this.assignmentsService.update(id, updateAssignmentDto);
     } catch (error) {
-      const errorMessage = await this.i18n.translate('assignment.error_updating_assignment', { args: { id } }) as string;
+      const errorMessage = await this.i18n.translate('assignment.errors.updating_assignment', { args: { id } });
       this.logger.error(errorMessage, error.stack);
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -85,15 +77,13 @@ export class AssignmentsController {
 
   @Delete(':id')
   async remove(@Param('id') id: number): Promise<{ message: string }> {
-    const logMessage = await this.i18n.translate('assignment.deleting_assignment', { args: { id } }) as string;
+    const logMessage = await this.i18n.translate('assignment.deleting_assignment', { args: { id } });
     this.logger.log(logMessage);
 
     try {
-      await this.assignmentsService.remove(id);
-      const message = await this.i18n.translate('assignment.assignment_deleted', { args: { id } }) as string;
-      return { message };
+      return await this.assignmentsService.remove(id);
     } catch (error) {
-      const errorMessage = await this.i18n.translate('assignment.error_deleting_assignment', { args: { id } }) as string;
+      const errorMessage = await this.i18n.translate('assignment.errors.deleting_assignment', { args: { id } });
       this.logger.error(errorMessage, error.stack);
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }

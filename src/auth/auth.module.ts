@@ -11,6 +11,7 @@ import { User } from '@/user/user.entity';
 import { AuthController } from './auth.controller';
 import { EmailModule } from '@/services/email/email.module';
 import { EmailTemplateModule } from '@/email-template/email-template.module';
+import { I18nModule } from 'nestjs-i18n'; // Importa I18nModule
 
 @Module({
   imports: [
@@ -29,8 +30,9 @@ import { EmailTemplateModule } from '@/email-template/email-template.module';
         signOptions: { expiresIn: configService.get<string>('EXPIRES_IN_JWT') },
       }),
     }),
+    I18nModule, // Agrega I18nModule para habilitar traducciones
   ],
-  providers: [AuthService, JwtStrategy, LocalAuthGuard],
+  providers: [AuthService, JwtStrategy, LocalAuthGuard, I18nModule],
   controllers: [AuthController],
   exports: [AuthService],
 })

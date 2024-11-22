@@ -26,20 +26,36 @@ export class TeamsService {
 
   async findOne(id: number): Promise<{ team: Team; message: string }> {
     const logMessage = await this.i18n.translate('team.finding_team_by_id', { args: { id } }) as string;
-    const team = await this.teamRepository.findOne({ where: { id }, relations: ['workGroup'] });
+    this.logInfo(logMessage);
+
+    const team = await this.teamRepository.findOne({
+      where: { id },
+      relations: ['workGroup'],
+    });
+
     if (!team) {
       const errorMessage = await this.i18n.translate('team.error_team_not_found', { args: { id } }) as string;
+      this.logError(errorMessage);
       throw new NotFoundException(errorMessage);
     }
+
     const message = await this.i18n.translate('team.team_found') as string;
     return { team, message };
   }
 
   async create(createTeamDto: CreateTeamDto): Promise<{ team: Team; message: string }> {
     const logMessage = await this.i18n.translate('team.creating_team') as string;
-    const workGroup = await this.workGroupRepository.findOne({ where: { id: createTeamDto.workGroupId } });
+    this.logInfo(logMessage);
+
+    const workGroup = await this.workGroupRepository.findOne({
+      where: { id: createTeamDto.workGroupId },
+    });
+
     if (!workGroup) {
-      const errorMessage = await this.i18n.translate('team.error_team_not_found', { args: { id: createTeamDto.workGroupId } }) as string;
+      const errorMessage = await this.i18n.translate('workgroup.errors.not_found', {
+        args: { id: createTeamDto.workGroupId },
+      }) as string;
+      this.logError(errorMessage);
       throw new NotFoundException(errorMessage);
     }
 
@@ -51,6 +67,8 @@ export class TeamsService {
 
   async update(id: number, updateTeamDto: UpdateTeamDto): Promise<{ team: Team; message: string }> {
     const logMessage = await this.i18n.translate('team.updating_team', { args: { id } }) as string;
+    this.logInfo(logMessage);
+
     const team = await this.findOne(id).then((response) => response.team);
     Object.assign(team, updateTeamDto);
 
@@ -61,12 +79,25 @@ export class TeamsService {
 
   async remove(id: number): Promise<{ message: string }> {
     const logMessage = await this.i18n.translate('team.deleting_team', { args: { id } }) as string;
+    this.logInfo(logMessage);
+
     const result = await this.teamRepository.delete(id);
     if (result.affected === 0) {
       const errorMessage = await this.i18n.translate('team.error_team_not_found', { args: { id } }) as string;
+      this.logError(errorMessage);
       throw new NotFoundException(errorMessage);
     }
+
     const message = await this.i18n.translate('team.team_deleted', { args: { id } }) as string;
     return { message };
+  }
+
+  // Métodos auxiliares para logging
+  private logInfo(message: string): void {
+    console.info(`[TeamsService] ${message}`);
+  }
+
+  private logError(message: string): void {
+    console.error(`[TeamsService] ${message}`);
   }
 }

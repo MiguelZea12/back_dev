@@ -46,8 +46,12 @@ export class EmailService {
           'content-type': 'application/json',
         },
       });
+
+      const successMessage = await this.i18n.translate('email.email_sent_success') as string;
+      console.log(`[EmailService] ${successMessage}`);
     } catch (error) {
       const errorMessage = await this.i18n.translate('errors.email.send_error') as string;
+      console.error(`[EmailService] ${errorMessage}`, error.message);
       throw new InternalServerErrorException(errorMessage, error.message);
     }
   }
@@ -62,15 +66,14 @@ export class EmailService {
       url: resetPasswordUrl,
     };
 
-    // Generate the final HTML content
+    // Render HTML content from the template
     const htmlContent = await this.emailTemplateService.renderTemplate(
       'resetPasswordEmail',
       context,
     );
 
-    // Obtain the sender email
-    const senderEmail: string =
-      this.configService.get<string>('EMAIL_SOFTWARE');
+    // Get sender email from environment variables
+    const senderEmail: string = this.configService.get<string>('EMAIL_SOFTWARE');
 
     // Localized subject
     const subject = await this.i18n.translate('email.reset_password_subject') as string;

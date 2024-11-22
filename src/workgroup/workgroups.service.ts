@@ -14,17 +14,20 @@ export class WorkGroupsService {
     private readonly i18n: I18nService, // Inyección de I18nService
   ) {}
 
-  async findAll(): Promise<WorkGroup[]> {
-    return await this.workGroupRepository.find({ relations: ['teams'] });
+  async findAll(): Promise<{ workGroups: WorkGroup[]; message: string }> {
+    const workGroups = await this.workGroupRepository.find({ relations: ['teams'] });
+    const message = await this.i18n.translate('workgroup.success.fetched_all') as string;
+    return { workGroups, message };
   }
 
-  async findOne(id: number): Promise<WorkGroup> {
+  async findOne(id: number): Promise<{ workGroup: WorkGroup; message: string }> {
     const workGroup = await this.workGroupRepository.findOne({ where: { id }, relations: ['teams'] });
     if (!workGroup) {
       const errorMessage = await this.i18n.translate('workgroup.errors.not_found', { args: { id } }) as string;
       throw new NotFoundException(errorMessage);
     }
-    return workGroup;
+    const message = await this.i18n.translate('workgroup.success.found', { args: { id } }) as string;
+    return { workGroup, message };
   }
 
   async create(createWorkGroupDto: CreateWorkGroupDto): Promise<{ workGroup: WorkGroup; message: string }> {
@@ -35,7 +38,11 @@ export class WorkGroupsService {
   }
 
   async update(id: number, updateWorkGroupDto: UpdateWorkGroupDto): Promise<{ workGroup: WorkGroup; message: string }> {
-    const workGroup = await this.findOne(id);
+    const workGroup = await this.workGroupRepository.findOne({ where: { id } });
+    if (!workGroup) {
+      const errorMessage = await this.i18n.translate('workgroup.errors.not_found', { args: { id } }) as string;
+      throw new NotFoundException(errorMessage);
+    }
     Object.assign(workGroup, updateWorkGroupDto);
     const updatedWorkGroup = await this.workGroupRepository.save(workGroup);
     const message = await this.i18n.translate('workgroup.success.updated', { args: { id } }) as string;

@@ -7,6 +7,7 @@ import { plainToInstance } from 'class-transformer';
 import { CreateRoleDto } from '@/role/dto/createRole.dto';
 import { UpdateRoleDto } from '@/role/dto/updateRole.dto';
 import { FiltersRoleDto } from '@/role/dto/filtersRole.dto';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class RoleService {
@@ -15,52 +16,35 @@ export class RoleService {
   constructor(
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+    private readonly i18n: I18nService, // Inyección de I18nService
   ) {}
 
-  // Const Message for Not Found
-  private MessageNotFounded(option: string, key: any) {
-    return `Rol con ${option}: ${key}, no encontrado.`;
+  private async createHttpException(messageKey: string, args?: any, status: HttpStatus = HttpStatus.NOT_FOUND): Promise<HttpException> {
+    const errorMsg = await this.i18n.translate(messageKey, { args }) as string;
+    this.logger.error(errorMsg);
+    return new HttpException(errorMsg, status);
   }
 
   async findByOneById(id: number): Promise<GetRoleDto> {
-    const role = await this.roleRepository.findOne({
-      where: { id },
-    });
-
+    const role = await this.roleRepository.findOne({ where: { id } });
     if (!role) {
-      const errorMsg = this.MessageNotFounded('ID', id);
-
-      this.logger.error(errorMsg);
-
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+      throw await this.createHttpException('role.error_role_not_found', { id });
     }
 
-    const getRoleDto = plainToInstance(GetRoleDto, role);
-
-    return getRoleDto;
+    return plainToInstance(GetRoleDto, role);
   }
 
   async findByName(name_role: string): Promise<GetRoleDto> {
-    const role = await this.roleRepository.findOne({
-      where: { name_role },
-    });
-
+    const role = await this.roleRepository.findOne({ where: { name_role } });
     if (!role) {
-      const errorMsg = this.MessageNotFounded('nombre', name_role);
-
-      this.logger.error(errorMsg);
-
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+      throw await this.createHttpException('role.error_role_not_found', { name: name_role });
     }
 
-    const getRoleDto = plainToInstance(GetRoleDto, role);
-
-    return getRoleDto;
+    return plainToInstance(GetRoleDto, role);
   }
 
   async findAllFilter(filtersRoleDto: FiltersRoleDto): Promise<any> {
     const { name_role, page = 1, limit = 10 } = filtersRoleDto;
-
     const query = this.roleRepository.createQueryBuilder('role');
 
     if (name_role) {
@@ -69,101 +53,62 @@ export class RoleService {
       });
     }
 
-    // Order by createdAt in descending order
-    query.orderBy('role.createdAt', 'DESC');
-
-    query.skip((page - 1) * limit).take(limit);
+    query.orderBy('role.createdAt', 'DESC').skip((page - 1) * limit).take(limit);
 
     try {
       const [roles, totalCount] = await query.getManyAndCount();
-
-      this.logger.log('Buscando roles..');
+      this.logger.log(await this.i18n.translate('role.fetching_all_roles'));
 
       const totalPages = Math.ceil(totalCount / limit);
-
-      const rolePaginated: any = {
-        data: roles,
+      return {
+        roles,
         totalCount,
-        rolePerPage: roles.length,
         totalPages,
       };
-
-      return {
-        RolePaginated: rolePaginated,
-        totalCount,
-      };
     } catch (error) {
-      const errorMessage = 'Error buscando los Roles';
-
-      this.logger.error(errorMessage, error.stack);
-
-      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw await this.createHttpException('role.error_fetching_roles', null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async createRole(roleDto: CreateRoleDto): Promise<GetRoleDto> {
-    const { name_role } = roleDto;
-
-    const newRole: Role = this.roleRepository.create({ name_role });
-
+    const newRole = this.roleRepository.create(roleDto);
     const savedRole = await this.roleRepository.save(newRole);
 
-    const getRoleDto = plainToInstance(GetRoleDto, savedRole);
-
-    const successMsg = 'El Rol ha sido creado existosamente!!';
+    const successMsg = await this.i18n.translate('role.role_created');
     this.logger.log(successMsg);
 
-    return getRoleDto;
+    return plainToInstance(GetRoleDto, savedRole);
   }
 
-  async updateRole(
-    id: number,
-    updateRoleDto: UpdateRoleDto,
-  ): Promise<GetRoleDto> {
-    const role = await this.roleRepository.findOne({
-      where: { id },
-    });
-
+  async updateRole(id: number, updateRoleDto: UpdateRoleDto): Promise<GetRoleDto> {
+    const role = await this.roleRepository.findOne({ where: { id } });
     if (!role) {
-      const errorMsg = this.MessageNotFounded('ID', id);
-      this.logger.error(errorMsg);
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+      throw await this.createHttpException('role.error_role_not_found', { id });
     }
 
     if (Object.keys(updateRoleDto).length === 0) {
-      const errorMsg = 'Los datos para actualizar no pueden estar vacios';
-
-      this.logger.error(errorMsg);
-      throw new HttpException(errorMsg, HttpStatus.BAD_REQUEST);
+      throw await this.createHttpException('role.error_updating_role_empty_data', null, HttpStatus.BAD_REQUEST);
     }
 
+    Object.assign(role, updateRoleDto);
     const updatedRole = await this.roleRepository.save(role);
 
-    const getRoleDto = plainToInstance(GetRoleDto, updatedRole, {
-      excludeExtraneousValues: true,
-    });
-
-    const successMsg = 'El Rol ha sido actualizado existosamente!!';
+    const successMsg = await this.i18n.translate('role.role_updated', { args: { id } });
     this.logger.log(successMsg);
 
-    return getRoleDto;
+    return plainToInstance(GetRoleDto, updatedRole);
   }
 
-  async deleteRole(id: number): Promise<void> {
-    const role = await this.roleRepository.findOne({
-      where: { id },
-    });
-
+  async deleteRole(id: number): Promise<{ message: string }> {
+    const role = await this.roleRepository.findOne({ where: { id } });
     if (!role) {
-      const errorMsg = 'Rol no econtrado';
-      this.logger.error(errorMsg);
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+      throw await this.createHttpException('role.error_role_not_found', { id });
     }
 
     await this.roleRepository.remove(role);
-
-    const successMsg = 'Rol eliminado exitosamente!!!';
-
+    const successMsg = await this.i18n.translate('role.role_deleted', { args: { id } });
     this.logger.log(successMsg);
+
+    return { message: successMsg };
   }
 }

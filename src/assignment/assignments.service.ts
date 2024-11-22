@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { I18nService } from 'nestjs-i18n';
 import { Assignment } from './entities/assignment.entity';
 import { CreateAssignmentDto } from './dto/createAssignment.dto';
 import { UpdateAssignmentDto } from './dto/updateAssignment.dto';
@@ -18,42 +19,56 @@ export class AssignmentsService {
 
     @InjectRepository(Team)
     private readonly teamRepository: Repository<Team>,
+
+    private readonly i18n: I18nService, // Inyección de I18nService
   ) {}
 
-  async findAll(): Promise<Assignment[]> {
-    return await this.assignmentRepository.find({ relations: ['user', 'team'] });
+  async findAll(): Promise<{ assignments: Assignment[]; message: string }> {
+    const assignments = await this.assignmentRepository.find({ relations: ['user', 'team'] });
+    const message = await this.i18n.translate('assignment.success.list') as string;
+    return { assignments, message };
   }
 
-  async findByTeamId(teamId: number): Promise<Assignment[]> {
-    return await this.assignmentRepository.find({
+  async findByTeamId(teamId: number): Promise<{ assignments: Assignment[]; message: string }> {
+    const assignments = await this.assignmentRepository.find({
       where: { team: { id: teamId } },
       relations: ['user', 'team'],
     });
+    const message = await this.i18n.translate('assignment.success.list_by_team', { args: { teamId } }) as string;
+    return { assignments, message };
   }
 
-  async create(createAssignmentDto: CreateAssignmentDto): Promise<Assignment> {
+  async create(createAssignmentDto: CreateAssignmentDto): Promise<{ assignment: Assignment; message: string }> {
     const user = await this.userRepository.findOne({ where: { id: createAssignmentDto.userId } });
     const team = await this.teamRepository.findOne({ where: { id: createAssignmentDto.teamId } });
 
     if (!user || !team) {
-      throw new NotFoundException('User or Team not found');
+      const errorMessage = await this.i18n.translate('assignment.errors.user_or_team_not_found') as string;
+      throw new NotFoundException(errorMessage);
     }
 
     const existingAssignment = await this.assignmentRepository.findOne({
       where: { user, team },
     });
     if (existingAssignment) {
-      throw new Error('The user is already assigned to this team');
+      const errorMessage = await this.i18n.translate('assignment.errors.already_assigned') as string;
+      throw new InternalServerErrorException(errorMessage);
     }
 
     const assignment = this.assignmentRepository.create({ user, team });
-    return await this.assignmentRepository.save(assignment);
+    const savedAssignment = await this.assignmentRepository.save(assignment);
+    const message = await this.i18n.translate('assignment.success.created') as string;
+    return { assignment: savedAssignment, message };
   }
 
-  async update(id: number, updateAssignmentDto: UpdateAssignmentDto): Promise<Assignment> {
+  async update(
+    id: number,
+    updateAssignmentDto: UpdateAssignmentDto,
+  ): Promise<{ assignment: Assignment; message: string }> {
     const assignment = await this.assignmentRepository.findOne({ where: { id }, relations: ['user', 'team'] });
     if (!assignment) {
-      throw new NotFoundException('Assignment not found');
+      const errorMessage = await this.i18n.translate('assignment.errors.not_found', { args: { id } }) as string;
+      throw new NotFoundException(errorMessage);
     }
 
     if (updateAssignmentDto.userId) {
@@ -63,13 +78,19 @@ export class AssignmentsService {
       assignment.team = await this.teamRepository.findOneOrFail({ where: { id: updateAssignmentDto.teamId } });
     }
 
-    return await this.assignmentRepository.save(assignment);
+    const updatedAssignment = await this.assignmentRepository.save(assignment);
+    const message = await this.i18n.translate('assignment.success.updated', { args: { id } }) as string;
+    return { assignment: updatedAssignment, message };
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<{ message: string }> {
     const result = await this.assignmentRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException('Assignment not found');
+      const errorMessage = await this.i18n.translate('assignment.errors.not_found', { args: { id } }) as string;
+      throw new NotFoundException(errorMessage);
     }
+
+    const message = await this.i18n.translate('assignment.success.deleted', { args: { id } }) as string;
+    return { message };
   }
 }

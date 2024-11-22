@@ -30,16 +30,22 @@ export class UserController {
   ) {}
 
   @Get(':id')
-  async findRoleById(@Param('id') id: number): Promise<{ user: GetUserDto; message: string }> {
-    const logMessage = await this.i18n.translate('user.finding_user_by_id', { args: { id } }) as string;
+  async findRoleById(
+    @Param('id') id: number,
+  ): Promise<{ user: GetUserDto; message: string }> {
+    const logMessage = await this.i18n.translate('user.finding_user_by_id', {
+      args: { id },
+    });
     this.logger.log(logMessage);
 
     try {
       const user = await this.userService.findByOneById(id);
-      const message = await this.i18n.translate('user.user_found') as string;
+      const message = await this.i18n.translate('user.success.found', { args: { id } });
       return { user, message };
     } catch (error) {
-      const errorMessage = await this.i18n.translate('user.error_user_not_found', { args: { id } }) as string;
+      const errorMessage = await this.i18n.translate('user.errors.not_found', {
+        args: { id },
+      });
       this.logger.error(errorMessage, error.stack);
       throw new HttpException(errorMessage, HttpStatus.NOT_FOUND);
     }
@@ -49,32 +55,34 @@ export class UserController {
   async findAllFiltered(
     @Query() filtersUserDto: FiltersUserDto,
   ): Promise<{ users: GetUserDto[]; message: string }> {
-    const logMessage = await this.i18n.translate('user.fetching_all_users') as string;
+    const logMessage = await this.i18n.translate('user.actions.fetching_all');
     this.logger.log(logMessage);
 
     try {
       const users = await this.userService.findAllFilter(filtersUserDto);
-      const message = await this.i18n.translate('user.users_list') as string;
+      const message = await this.i18n.translate('user.success.list');
       return { users, message };
     } catch (error) {
-      const errorMessage = await this.i18n.translate('user.error_fetching_users') as string;
+      const errorMessage = await this.i18n.translate('user.errors.fetching');
       this.logger.error(errorMessage, error.stack);
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Post()
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<{ user: GetUserDto; message: string }> {
-    const logMessage = await this.i18n.translate('user.creating_user') as string;
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<{ user: GetUserDto; message: string }> {
+    const logMessage = await this.i18n.translate('user.actions.creating');
     this.logger.log(logMessage);
 
     try {
       const user = await this.userService.createUser(createUserDto);
-      const message = await this.i18n.translate('user.user_created') as string;
+      const message = await this.i18n.translate('user.success.created');
       this.logger.log(message);
       return { user, message };
     } catch (error) {
-      const errorMessage = await this.i18n.translate('user.error_creating_user') as string;
+      const errorMessage = await this.i18n.translate('user.errors.creating');
       this.logger.error(errorMessage, error.stack);
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -85,16 +93,20 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
     @Param('id') id: number,
   ): Promise<{ user: GetUserDto; message: string }> {
-    const logMessage = await this.i18n.translate('user.updating_user', { args: { id } }) as string;
+    const logMessage = await this.i18n.translate('user.actions.updating', {
+      args: { id },
+    });
     this.logger.log(logMessage);
 
     try {
       const updatedUser = await this.userService.updateUser(id, updateUserDto);
-      const message = await this.i18n.translate('user.user_updated', { args: { id } }) as string;
+      const message = await this.i18n.translate('user.success.updated', {
+        args: { id },
+      });
       this.logger.log(message);
       return { user: updatedUser, message };
     } catch (error) {
-      const errorMessage = await this.i18n.translate('user.error_updating_user') as string;
+      const errorMessage = await this.i18n.translate('user.errors.update');
       this.logger.error(errorMessage, error.stack);
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
