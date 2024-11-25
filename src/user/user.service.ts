@@ -16,6 +16,7 @@ import { CreateUserDto } from '@/user/dto/createUser.dto';
 import { UpdateUserDto } from '@/user/dto/updateUser.dto';
 import { FiltersUserDto } from './dto/filtersUser.dto';
 import { RoleService } from '@/role/role.service';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class UserService {
@@ -25,36 +26,17 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly roleService: RoleService,
+    private readonly i18n: I18nService,
   ) {}
-
-  // Const Message for Not Found
-  private MessageNotFounded(option: string, key: any) {
-    return `Usuario con ${option}: ${key}, no encontrado.`;
-  }
 
   private async createHttpException(
     messageKey: string,
+    args: any,
     status: HttpStatus = HttpStatus.NOT_FOUND,
   ): Promise<HttpException> {
-    const errorMsg = messageKey as string;
-
+    const errorMsg = await this.i18n.t(messageKey, { args });
     this.logger.error(errorMsg);
     return new HttpException(errorMsg, status);
-  }
-
-  async findOneByDocument(document: string): Promise<AuthUserDto> {
-    const user = await this.userRepository.findOne({
-      where: { document },
-      relations: ['role'],
-    });
-
-    if (!user) {
-      const errorMsg = this.MessageNotFounded('numero de cédula', document);
-      this.logger.error(errorMsg);
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
-    }
-
-    return user;
   }
 
   async findByOneById(id: number): Promise<GetUserDto> {
@@ -64,48 +46,12 @@ export class UserService {
     });
 
     if (!user) {
-      const errorMsg = this.MessageNotFounded('ID', id);
-
-      this.logger.error(errorMsg);
-
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+      throw await this.createHttpException('user.error_user_not_found', { id });
     }
 
     return plainToInstance(GetUserDto, user, {
       excludeExtraneousValues: true,
     });
-  }
-
-  async findOneByEmail(email: string): Promise<AuthUserDto> {
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
-
-    if (!user) {
-      const errorMsg = this.MessageNotFounded('email', email);
-
-      this.logger.error(errorMsg);
-      throw new NotFoundException(errorMsg);
-    }
-
-    return user;
-  }
-
-  async findOneByResetPasswordToken(
-    resetPasswordToken: string,
-  ): Promise<AuthUserDto> {
-    const user = await this.userRepository.findOne({
-      where: { resetPasswordToken },
-      relations: ['role'],
-    });
-
-    if (!user) {
-      const errorMsg = 'Usuario no encontrado';
-      this.logger.error(errorMsg);
-      throw new NotFoundException(errorMsg);
-    }
-
-    return user;
   }
 
   async findAllFilter(filtersUserDto: FiltersUserDto): Promise<any> {
@@ -127,15 +73,13 @@ export class UserService {
       });
     }
 
-    // Order by createdAt in descending order
     query.orderBy('user.createdAt', 'DESC');
-
     query.skip((page - 1) * limit).take(limit);
 
     try {
       const [users, totalCount] = await query.getManyAndCount();
 
-      this.logger.log('Buscando usuarios..');
+      this.logger.log(await this.i18n.t('user.fetching_all_users'));
 
       const totalPages = Math.ceil(totalCount / limit);
 
@@ -145,98 +89,110 @@ export class UserService {
         }),
       );
 
-      const userPaginated: any = {
+      return {
         data: userDtos,
         totalCount,
         userPerPage: userDtos.length,
         totalPages,
       };
-
-      return {
-        UserPaginated: userPaginated,
-        totalCount,
-      };
     } catch (error) {
-      const errorMessage = 'Error buscando los usuarios';
-
+      const errorMessage = await this.i18n.t('user.error_fetching_users');
       this.logger.error(errorMessage, error.stack);
-
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async createUser(userDto: CreateUserDto): Promise<GetUserDto> {
-    const {
-      name,
-      lastName,
-      role,
-      password,
-      email,
-      document,
-      direction,
-      status,
-    } = userDto;
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const roleDb = await this.roleService.findByName(role.name_role);
+    const hashedPassword = await bcrypt.hash(userDto.password, 10);
+    const roleDb = await this.roleService.findByName(userDto.role.name_role);
 
     const newUser = this.userRepository.create({
-      name,
-      lastName,
-      role: roleDb,
+      ...userDto,
       password: hashedPassword,
-      email,
-      document,
-      direction,
-      status,
+      role: roleDb,
     });
 
     const savedUser = await this.userRepository.save(newUser);
 
-    const getUserDto = plainToInstance(GetUserDto, savedUser, {
+    this.logger.log(await this.i18n.t('user.user_created'));
+
+    return plainToInstance(GetUserDto, savedUser, {
       excludeExtraneousValues: true,
     });
-
-    const successMsg = 'El usuario ha sido creado existosamente!!';
-    this.logger.log(successMsg);
-
-    return getUserDto;
   }
 
   async updateUser(
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<GetUserDto> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-    });
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
-      const errorMsg = this.MessageNotFounded('ID', id);
-      this.logger.error(errorMsg);
-      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
-    }
-
-    if (Object.keys(updateUserDto).length === 0) {
-      const errorMsg = 'Los datos a actualizar no pueden estar vacios';
-
-      this.logger.error(errorMsg);
-      throw new HttpException(errorMsg, HttpStatus.BAD_REQUEST);
+      throw await this.createHttpException('user.error_user_not_found', { id });
     }
 
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
 
+    Object.assign(user, updateUserDto);
     const updatedUser = await this.userRepository.save(user);
 
-    const getUserDto = plainToInstance(GetUserDto, updatedUser, {
+    this.logger.log(await this.i18n.t('user.user_updated'));
+
+    return plainToInstance(GetUserDto, updatedUser, {
       excludeExtraneousValues: true,
     });
+  }
 
-    const successMsg = 'El usuario ha sido actualizado existosamente!!';
-    this.logger.log(successMsg);
+  async findOneByDocument(document: string): Promise<AuthUserDto> {
+    const user = await this.userRepository.findOne({
+      where: { document },
+      relations: ['role'],
+    });
 
-    return getUserDto;
+    if (!user) {
+      const errorMsg = await this.i18n.t('user.error_user_not_found', {
+        args: { document },
+      });
+      this.logger.error(errorMsg);
+      throw new HttpException(errorMsg, HttpStatus.NOT_FOUND);
+    }
+
+    return user;
+  }
+
+  async findOneByEmail(email: string): Promise<AuthUserDto> {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      const errorMsg = await this.i18n.t('user.error_user_not_found', {
+        args: { email },
+      });
+      this.logger.error(errorMsg);
+      throw new NotFoundException(errorMsg);
+    }
+
+    return user;
+  }
+
+  async findOneByResetPasswordToken(
+    resetPasswordToken: string,
+  ): Promise<AuthUserDto> {
+    const user = await this.userRepository.findOne({
+      where: { resetPasswordToken },
+      relations: ['role'],
+    });
+
+    if (!user) {
+      const errorMsg = await this.i18n.t('user.error_user_not_found', {
+        args: { resetPasswordToken },
+      });
+      this.logger.error(errorMsg);
+      throw new NotFoundException(errorMsg);
+    }
+
+    return user;
   }
 }

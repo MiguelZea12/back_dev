@@ -1,0 +1,50 @@
+{
+  "user": {
+    "error_user_not_found": "Usuario no encontrado con ID: {{id}}",
+    "error_fetching_users": "Error al obtener los usuarios",
+    "error_creating_user": "Error al crear el usuario",
+    "error_updating_user": "Error al actualizar el usuario"
+  },
+
+  "role": {
+    "error_role_not_found": "Rol no encontrado con ID: {{id}}",
+    "error_fetching_roles": "Error al obtener los roles",
+    "error_creating_role": "Error al crear el rol",
+    "error_updating_role": "Error al actualizar el rol",
+    "error_deleting_role": "Error al eliminar el rol"
+  },
+
+  "assignment": {
+    "error_assignment_not_found": "Asignacion no encontrada por ID: {{id}}",
+    "error_user_or_team_not_found": "Usuario o Equipo no encontrado",
+    "error_user_already_assigned": "El usuario ya esta asignado a este equipo"
+  },
+
+  "auth": {
+    "error_invalid_credentials": "Credenciales inválidas",
+    "login_error": "Error durante el inicio de sesión",
+    "reset_password_email_error": "Error al enviar el correo de restablecimiento de contraseña",
+    "reset_password_error": "Error al restablecer la contraseña del usuario"
+  },
+
+  "email": {
+    "email_send_error": "Error al enviar el correo electrónico"
+  },
+
+  "workgroup": {
+    "not_found": "Grupo de trabajo con ID {{id}} no encontrado"
+  },
+
+  "team": {
+    "error_team_not_found": "Equipo no encontrado con ID: {{id}}",
+    "error_fetching_teams": "Error al obtener los equipos",
+    "error_creating_team": "Error al crear el equipo",
+    "error_updating_team": "Error al actualizar el equipo",
+    "error_deleting_team": "Error al eliminar el equipo"
+  },
+
+  "patient":{
+    "error_patient_not_found": "Patient not found with ID: {{id}}"
+  }
+
+}

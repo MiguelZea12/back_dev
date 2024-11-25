@@ -20,6 +20,8 @@ import { AssignmentsModule } from '@/assignment/assignments.module';
 import { WorkGroupsModule } from '@/workgroup/workgroups.module';
 import { EmailModule } from '@/services/email/email.module';
 import { EmailTemplateModule } from './email-template/email-template.module';
+import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } from 'nestjs-i18n';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -32,6 +34,22 @@ import { EmailTemplateModule } from './email-template/email-template.module';
         ...dataBaseConfig,
         autoLoadEntities: true,
       }),
+      inject: [ConfigService],
+    }),
+    I18nModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        fallbackLanguage: configService.get<string>('FALLBACK_LANGUAGE', 'en'),
+        loaderOptions: {
+          path: path.join(__dirname, '/i18n/'),
+          watch: true,
+        },
+      }),
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+        new HeaderResolver(['x-lang']),
+      ],
       inject: [ConfigService],
     }),
     UserModule,

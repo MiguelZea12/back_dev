@@ -1,0 +1,53 @@
+{
+  "user": {
+    "error_user_not_found": "User not found with ID: {{id}}",
+    "error_fetching_users": "Error fetching users",
+    "error_creating_user": "Error creating user",
+    "error_updating_user": "Error updating user"
+  },
+
+  "role": {
+    "error_role_not_found": "Role not found with ID: {{id}}",
+    "error_fetching_roles": "Error fetching roles",
+    "error_creating_role": "Error creating role",
+    "error_updating_role": "Error updating role",
+    "error_deleting_role": "Error deleting role"
+  },
+
+  "assignment": {
+    "error_assignment_not_found": "Assignment not found",
+    "error_fetching_assignments": "Error fetching assignments",
+    "error_fetching_by_team": "Error fetching assignments for team ID: {{teamId}}",
+    "error_creating_assignment": "Error creating assignment",
+    "error_updating_assignment": "Error updating assignment with ID: {{id}}",
+    "error_deleting_assignment": "Error deleting assignment with ID: {{id}}"
+  },
+
+  "auth": {
+    "error_assignment_not_found": "Assignment not found with ID: {{id}}",
+    "error_user_or_team_not_found": "User or Team not found",
+    "error_user_already_assigned": "The user is already assigned to this team"
+  },
+
+  "email": {
+    "email_send_error": "Error sending the email",
+    "template_not_found": "Email template '{{templateName}}' not found"
+  },
+
+  "workgroup": {
+    "not_found": "WorkGroup with ID {{id}} not found"
+  },
+
+  "team": {
+    "error_team_not_found": "Team not found with ID: {{id}}",
+    "error_fetching_teams": "Error fetching teams",
+    "error_creating_team": "Error creating team",
+    "error_updating_team": "Error updating team",
+    "error_deleting_team": "Error deleting team"
+  },
+
+  "patient":{
+    "error_patient_not_found": "Patient not found with ID: {{id}}"
+  }
+
+}

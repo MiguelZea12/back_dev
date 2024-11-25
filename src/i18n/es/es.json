@@ -1,0 +1,76 @@
+{
+  "user": {
+    "user_created": "Usuario creado exitosamente",
+    "user_deleted": "Usuario eliminado exitosamente",
+    "user_updated": "Usuario actualizado exitosamente",
+    "user_found": "Usuario encontrado exitosamente",
+    "finding_user_by_id": "Buscando usuario con ID: {{id}}",
+    "fetching_all_users": "Obteniendo todos los usuarios de la base de datos",
+    "users_list": "Lista de usuarios obtenida exitosamente",
+    "creating_user": "Creando usuario...",
+    "updating_user": "Actualizando usuario con ID: {{id}}"
+  },
+
+  "role": {
+    "role_created": "Rol creado exitosamente",
+    "role_deleted": "Rol eliminado exitosamente",
+    "role_updated": "Rol actualizado exitosamente",
+    "role_found": "Rol encontrado exitosamente",
+    "finding_role_by_id": "Buscando rol con ID: {{id}}",
+    "fetching_all_roles": "Obteniendo todos los roles de la base de datos",
+    "roles_list": "Lista de roles obtenida exitosamente",
+    "creating_role": "Creando rol...",
+    "updating_role": "Actualizando rol con ID: {{id}}",
+    "deleting_role": "Eliminando rol con ID: {{id}}"
+  },
+
+  "assignment": {
+    "assignment_created": "Asignación creada exitosamente",
+    "assignment_deleted": "Asignación eliminada exitosamente",
+    "assignment_updated": "Asignación actualizada exitosamente",
+    "assignments_list": "Lista de asignaciones obtenida exitosamente"
+  },
+
+  "auth": {
+    "login_success": "Inicio de sesión exitoso",
+    "requesting_password_reset": "Solicitando restablecimiento de contraseña...",
+    "password_reset_requested": "Solicitud de restablecimiento de contraseña exitosa",
+    "resetting_password": "Restableciendo contraseña...",
+    "password_reset_success": "Contraseña restablecida exitosamente",
+    "reset_password_token_created": "Token para restablecer contraseña creado exitosamente",
+    "sending_reset_password_email": "Intentando enviar el correo de restablecimiento de contraseña",
+    "reset_password_email_sent": "Correo de restablecimiento de contraseña enviado exitosamente",
+    "reset_password_email_message": "Se ha enviado un correo electrónico para restablecer tu contraseña"
+  },
+
+  "email": {
+    "email_sent_success": "Correo enviado exitosamente",
+    "template_not_found": "Plantilla de correo '{{templateName}}' no encontrado"
+  },
+
+  "workgroup": {
+    "created": "Grupo de trabajo creado exitosamente",
+    "updated": "Grupo de trabajo actualizado exitosamente",
+    "deleted": "Grupo de trabajo eliminado exitosamente"
+  },
+
+  "team": {
+    "team_created": "Equipo creado exitosamente",
+    "team_deleted": "Equipo eliminado exitosamente",
+    "team_updated": "Equipo actualizado exitosamente",
+    "team_found": "Equipo encontrado exitosamente",
+    "finding_team_by_id": "Buscando equipo con ID: {{id}}",
+    "fetching_all_teams": "Obteniendo todos los equipos de la base de datos",
+    "teams_list": "Lista de equipos obtenida exitosamente",
+    "creating_team": "Creando equipo...",
+    "updating_team": "Actualizando equipo con ID: {{id}}",
+    "deleting_team": "Eliminando equipo con ID: {{id}}"
+  },
+
+  "patient": {
+    "patient_created": "Paciente creado con éxito",
+    "patient_updated": "Paciente actualizado con éxito",
+    "patient_disabled": "Paciente deshabilitado con éxito",
+    "patients_list": "Lista de pacientes recuperada con éxito"
+  }
+}

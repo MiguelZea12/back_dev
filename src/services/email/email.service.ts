@@ -2,12 +2,14 @@ import { EmailTemplateService } from '@/email-template/email-template.service';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class EmailService {
   constructor(
     private readonly configService: ConfigService,
     private readonly emailTemplateService: EmailTemplateService,
+    private readonly i18n: I18nService,
   ) {}
 
   async sendEmail(
@@ -45,7 +47,7 @@ export class EmailService {
         },
       });
     } catch (error) {
-      const errorMessage = 'Error en el envió del correo electrónico';
+      const errorMessage = await this.i18n.t('email.email_send_error');
       throw new InternalServerErrorException(errorMessage, error.message);
     }
   }
@@ -77,7 +79,7 @@ export class EmailService {
       senderEmail,
       name,
       email,
-      'Solicitud para Restablecer Contraseña',
+      await this.i18n.t('email.reset_password_subject'), // Clave para la línea del asunto (opcional)
       htmlContent,
     );
   }
